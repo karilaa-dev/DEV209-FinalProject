@@ -1,10 +1,21 @@
-import React from "react";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 const SignupPage = () => {
   return (
-    <div>
-      <h2>Signup Page</h2>
-      <form>
+    <div style={{ display: 'flex', flexDirection: 'column', padding: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+        <h1>Signup Page</h1>
+        <div>
+          <Link to="/">
+            <button style={{ marginRight: '10px' }}>Home</button>
+          </Link>
+          <Link to="/login">
+            <button>Login</button>
+          </Link>
+        </div>
+      </div>
+      <form style={{ marginTop: '20px' }}>
         <div>
           <label>Username:</label>
           <input type="text" name="username" />
