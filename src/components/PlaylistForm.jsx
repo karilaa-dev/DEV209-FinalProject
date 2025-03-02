@@ -12,6 +12,7 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
   const [formData, setFormData] = useState({
     name: existingPlaylist?.name || "",
     description: existingPlaylist?.description || "",
+    isHidden: existingPlaylist?.isHidden || false,
   });
 
   const [videoUrl, setVideoUrl] = useState("");
@@ -22,10 +23,10 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     });
   };
 
@@ -165,6 +166,24 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
             onChange={handleChange}
             rows="3"
           />
+        </div>
+        
+        <div className="form-group checkbox-group">
+          <label htmlFor="isHidden" className="checkbox-label">
+            <input
+              type="checkbox"
+              id="isHidden"
+              name="isHidden"
+              checked={formData.isHidden}
+              onChange={handleChange}
+            />
+            Hide playlist from main view (only accessible via direct link)
+          </label>
+          {formData.isHidden && (
+            <p className="info-message">
+              This playlist will not appear in the public playlist listings but can still be accessed via a direct link.
+            </p>
+          )}
         </div>
         
         <div className="videos-section">

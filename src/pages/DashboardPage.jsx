@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { getUserPlaylists, deletePlaylist } from "../services/playlist";
 import Navbar from "../components/Navbar";
 import PlaylistCard from "../components/PlaylistCard";
-import { FaPlus, FaTrash, FaEdit } from "react-icons/fa";
+import { FaPlus, FaTrash, FaEdit, FaLink, FaClipboard } from "react-icons/fa";
 
 const DashboardPage = () => {
   const { isAuthenticated, currentUser } = useAuth();
@@ -97,7 +97,7 @@ const DashboardPage = () => {
             <div className="user-playlists-grid">
               {userPlaylists.map((playlist) => (
                 <div key={playlist.id} className="user-playlist-card-container">
-                  <PlaylistCard playlist={playlist} />
+                  <PlaylistCard playlist={playlist} showHiddenIndicator={true} />
                   <div className="playlist-actions">
                     <Link 
                       to={`/edit-playlist/${playlist.id}`} 
@@ -114,6 +114,19 @@ const DashboardPage = () => {
                     >
                       <FaTrash />
                     </button>
+                    {playlist.isHidden && (
+                      <button
+                        className="share-playlist-button"
+                        onClick={() => {
+                          const playlistUrl = `${window.location.origin}/playlist/${playlist.id}`;
+                          navigator.clipboard.writeText(playlistUrl);
+                          alert("Playlist link copied to clipboard!");
+                        }}
+                        title="Copy shareable link"
+                      >
+                        <FaLink />
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

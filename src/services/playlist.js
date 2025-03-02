@@ -20,6 +20,7 @@ export const createPlaylist = async (playlistData, userId) => {
     const playlistWithUser = {
       ...playlistData,
       userId,
+      isHidden: playlistData.isHidden || false, // Add support for hiding playlists
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -110,6 +111,8 @@ export const getAllPlaylists = async (lastVisible = null, itemsPerPage = 8) => {
     if (lastVisible) {
       q = query(
         collection(db, "playlists"),
+        // Add filter to exclude hidden playlists
+        where("isHidden", "!=", true),
         orderBy("createdAt", "desc"),
         startAfter(lastVisible),
         limit(itemsPerPage)
@@ -117,6 +120,8 @@ export const getAllPlaylists = async (lastVisible = null, itemsPerPage = 8) => {
     } else {
       q = query(
         collection(db, "playlists"),
+        // Add filter to exclude hidden playlists
+        where("isHidden", "!=", true),
         orderBy("createdAt", "desc"),
         limit(itemsPerPage)
       );
@@ -141,6 +146,7 @@ export const getAllPlaylists = async (lastVisible = null, itemsPerPage = 8) => {
       // Handle the index building error by fetching without ordering
       const simpleQuery = query(
         collection(db, "playlists"),
+        where("isHidden", "!=", true),
         limit(itemsPerPage)
       );
       
@@ -172,7 +178,9 @@ export const searchPlaylists = async (searchTerm) => {
     // Firestore doesn't support full-text search natively
     // This is a simple implementation that gets all playlists and filters them
     // In a production app, you might want to use Algolia or a similar service
-    const querySnapshot = await getDocs(collection(db, "playlists"));
+    const querySnapshot = await getDocs(
+      query(collection(db, "playlists"), where("isHidden", "!=", true))
+    );
     const playlists = [];
     
     querySnapshot.forEach((doc) => {

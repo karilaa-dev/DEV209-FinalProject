@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FaEyeSlash } from "react-icons/fa";
 
-const PlaylistCard = ({ playlist }) => {
+const PlaylistCard = ({ playlist, showHiddenIndicator = false }) => {
   // Default thumbnail if none is provided
   const defaultThumbnail = "https://via.placeholder.com/300x300?text=Playlist";
   
@@ -19,6 +20,11 @@ const PlaylistCard = ({ playlist }) => {
           <div className="playlist-card-count">
             {playlist.videos ? playlist.videos.length : 0} videos
           </div>
+          {playlist.isHidden && showHiddenIndicator && (
+            <div className="playlist-hidden-indicator">
+              <FaEyeSlash /> Hidden
+            </div>
+          )}
         </div>
         <div className="playlist-card-content">
           <h3 className="playlist-card-title">{playlist.name}</h3>
