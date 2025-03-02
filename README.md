@@ -35,7 +35,8 @@ npm install
    - Enable Email/Password authentication in the Authentication section
    - Create a Firestore database in Test mode
    - Get your Firebase configuration (Project settings > General > Your apps > Firebase SDK snippet > Config)
-   - Open `src/services/firebase.js` and replace the placeholder values with your Firebase configuration
+   - Create a `.env` file in the root directory based on the `.env.example` template
+   - Add your Firebase configuration values to the `.env` file
 
 ## Running Locally
 
@@ -46,55 +47,33 @@ npm run dev
 
 The application will be available at [http://localhost:5173](http://localhost:5173).
 
-## Testing with Firebase without Deployment
+## Environment Variables
 
-There are two main ways to test Firebase functionality locally:
+This project uses environment variables to securely store Firebase configuration. The following files are used:
 
-### Option 1: Using Production Firebase with Local Development
+- `.env`: Contains your actual Firebase configuration (not committed to git)
+- `.env.example`: A template showing the required environment variables (committed to git)
+
+When setting up the project, copy `.env.example` to `.env` and add your Firebase credentials:
+
+```bash
+# Firebase Configuration
+VITE_FIREBASE_API_KEY=your_api_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain_here
+VITE_FIREBASE_PROJECT_ID=your_project_id_here
+VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket_here
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id_here
+VITE_FIREBASE_APP_ID=your_app_id_here
+```
+
+## Testing with Firebase in Development
+
+To test Firebase functionality in your local development environment:
 
 1. Set up your Firebase project as described in the Setup section
-2. Add your Firebase configuration to `src/services/firebase.js`
+2. Add your Firebase configuration to the `.env` file
 3. Run the local development server (`npm run dev`)
 4. The app will connect to your production Firebase project while running locally
-
-### Option 2: Using Firebase Emulators
-
-1. Install Firebase CLI:
-```bash
-npm install -g firebase-tools
-```
-
-2. Login to Firebase:
-```bash
-firebase login
-```
-
-3. Initialize Firebase in your project:
-```bash
-firebase init
-```
-   - Select Firestore and Authentication emulators
-   - Choose your Firebase project
-   - Accept the default ports or configure as needed
-
-4. Update `src/services/firebase.js` to use emulators:
-   - Uncomment the emulator connection code:
-```javascript
-if (window.location.hostname === "localhost") {
-  connectAuthEmulator(auth, "http://localhost:9099");
-  connectFirestoreEmulator(db, "localhost", 8080);
-}
-```
-
-5. Start the emulators:
-```bash
-firebase emulators:start
-```
-
-6. In another terminal, run the development server:
-```bash
-npm run dev
-```
 
 ## Building for Production
 
