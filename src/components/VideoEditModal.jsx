@@ -42,7 +42,7 @@ const VideoEditModal = ({ video, onSave, onCancel }) => {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content video-edit-modal">
+      <div className="modal-content video-edit-modal popup-modal">
         <div className="modal-header">
           <h2>Edit Video</h2>
           <button className="close-button" onClick={onCancel}>

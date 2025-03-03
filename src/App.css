@@ -27,6 +27,101 @@ button {
   cursor: pointer;
 }
 
+/* Enhanced Form Elements - Consistent styling across the app */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: white;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="password"]:hover,
+input[type="url"]:hover,
+input[type="search"]:hover,
+textarea:hover,
+select:hover {
+  border-color: #b3b3b3;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+  outline: none;
+}
+
+input.error,
+textarea.error,
+select.error {
+  border-color: #e74c3c;
+  background-color: #fff8f8;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+  display: block;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #444;
+}
+
+/* Checkbox styling consistency */
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+/* Placeholder styling */
+::placeholder {
+  color: #aaa;
+  opacity: 1;
+}
+
+/* Disabled input styling */
+input:disabled,
+textarea:disabled,
+select:disabled {
+  background-color: #f5f5f5;
+  border-color: #ddd;
+  color: #999;
+  cursor: not-allowed;
+}
+
 /* Navbar styles */
 .navbar {
   background-color: #333;
@@ -177,6 +272,12 @@ button {
   border-radius: 30px;
   overflow: hidden;
   background-color: white;
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.search-input-container:focus-within {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
 }
 
 .search-input {
@@ -247,7 +348,7 @@ button {
 
 .playlist-card-thumbnail {
   position: relative;
-  padding-top: 100%; /* Square aspect ratio */
+  padding-top: 56.25%; /* 16:9 aspect ratio */
   overflow: hidden;
 }
 
@@ -653,8 +754,8 @@ button {
   font-weight: 500;
 }
 
-/* Create/Edit Playlist Page */
-.page-content {
+/* Create/Edit Playlist Page and Profile Page */
+.page-content, .profile-content, .playlist-detail-content {
   max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
@@ -770,250 +871,341 @@ button {
   background-color: #0056b3;
 }
 
-/* YouTube Search Styles */
-.youtube-search {
-  margin-bottom: 1.5rem;
-}
-
-.youtube-search-form {
-  margin-bottom: 1rem;
-}
-
-.youtube-search-error {
-  color: #e74c3c;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  background-color: #fde2e2;
-  border-radius: 4px;
+/* EditableVideoItem styles */
+.editable-video-item {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.youtube-search-no-results {
-  color: #666;
+  background-color: white;
+  border-radius: 8px;
   padding: 1rem;
-  text-align: center;
-  background-color: #f8f9fa;
-  border-radius: 4px;
   margin-bottom: 1rem;
-}
-
-.youtube-search-confirmation {
-  color: #28a745;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  background-color: #d4edda;
-  border-radius: 4px;
-  display: flex;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  position: relative;
   align-items: center;
-  gap: 0.5rem;
-  text-align: center;
-  justify-content: center;
 }
 
-.youtube-search-results {
-  max-height: 350px;
-  overflow-y: auto;
-  border: 1px solid #eee;
-  border-radius: 4px;
-}
-
-.youtube-search-result-item {
-  display: flex;
-  padding: 0.8rem;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
-}
-
-.youtube-search-result-item:last-child {
-  border-bottom: none;
-}
-
-.youtube-search-result-item:hover {
-  background-color: #f5f5f5;
-}
-
-.youtube-search-result-item.selected {
-  background-color: #e6f3ff;
-  border-left: 3px solid #0066cc;
-  transform: scale(1.01);
-}
-
-.result-thumbnail {
+.editable-video-item .video-thumbnail {
   width: 120px;
   height: 68px;
   margin-right: 1rem;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
-.result-thumbnail img {
+.editable-video-item .video-thumbnail img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.result-details {
+.editable-video-item .video-details {
   flex: 1;
+  min-width: 0;
 }
 
-.result-title {
-  margin: 0 0 0.3rem 0;
-  font-size: 0.95rem;
+.editable-video-item .video-title {
+  font-size: 1rem;
+  margin-bottom: 0.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.result-channel {
+.editable-video-item .video-description {
   color: #666;
-  font-size: 0.8rem;
-  margin: 0 0 0.3rem 0;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
 }
 
-.result-description {
-  color: #777;
-  font-size: 0.8rem;
+.editable-video-item .video-link {
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.editable-video-item .video-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-left: 1rem;
+}
+
+.editable-video-item .reorder-actions,
+.editable-video-item .edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editable-video-item .move-video-up,
+.editable-video-item .move-video-down,
+.editable-video-item .edit-video-button,
+.editable-video-item .remove-video-button {
+  background-color: #f5f5f5;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.editable-video-item .move-video-up:hover,
+.editable-video-item .move-video-down:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-2px);
+}
+
+.editable-video-item .edit-video-button {
+  background-color: #0066cc;
+  color: white;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.editable-video-item .edit-video-button:hover {
+  background-color: #0052a3;
+  transform: scale(1.1);
+}
+
+.editable-video-item .remove-video-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.editable-video-item .remove-video-button:hover {
+  background-color: #c0392b;
+}
+
+/* Modal and Popup styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-modal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-content {
+  padding: 1rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-button:hover {
+  color: #e74c3c;
+}
+
+/* YouTube Search container and popup */
+.youtube-search-container {
+  position: relative;
+}
+
+.youtube-search-results-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 700px;
+  max-height: 80vh;
+  z-index: 1000;
+  animation: modalFadeIn 0.3s ease-out;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.youtube-search-results-popup .popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  background-color: #f8f8f8;
+}
+
+.youtube-search-results-popup .popup-header h3 {
   margin: 0;
+}
+
+.popup-search-container {
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #eee;
+}
+
+.popup-search-container .search-input-container {
+  max-width: 100%;
+  margin-bottom: 0;
+}
+
+.youtube-search-results {
+  padding: 1rem;
+  overflow-y: auto;
+  max-height: calc(80vh - 60px);
+}
+
+/* YouTube search result items styling */
+.youtube-search-result-item {
+  display: flex;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.youtube-search-result-item:hover {
+  background-color: #f8f8f8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.youtube-search-result-item.selected {
+  border-color: #0066cc;
+  background-color: rgba(0, 102, 204, 0.05);
+}
+
+.youtube-search-result-item .result-thumbnail {
+  width: 120px;
+  height: 68px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-right: 12px;
+  flex-shrink: 0;
+  border: 1px solid #e0e0e0;
+}
+
+.youtube-search-result-item .result-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.youtube-search-result-item .result-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.youtube-search-result-item .result-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.youtube-search-result-item .result-channel {
+  font-size: 0.85rem;
+  color: #0066cc;
+  margin-bottom: 4px;
+}
+
+.youtube-search-result-item .result-description {
+  font-size: 0.8rem;
+  color: #666;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  line-height: 1.4;
 }
 
-.spinner {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.add-video-tabs {
-  display: flex;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #ddd;
-}
-
-.add-video-tab {
-  padding: 0.6rem 1rem;
-  cursor: pointer;
-  border: none;
-  background: none;
-  font-weight: 500;
-}
-
-.add-video-tab.active {
-  border-bottom: 2px solid #0066cc;
-  color: #0066cc;
-}
-
-/* Video reordering styles */
-.video-list-item {
-  position: relative;
-}
-
-.video-list-item.dragging {
-  opacity: 0.5;
-}
-
-.video-reorder-controls {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.video-reorder-button {
-  background: rgba(0, 0, 0, 0.6);
+.youtube-search-confirmation {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4CAF50;
   color: white;
-  border: none;
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.video-reorder-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.video-list-thumbnail {
-  margin-left: 0;
-}
-
-/* Styles for the playlist hiding feature */
-.checkbox-group {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 20px;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-.checkbox-label input[type="checkbox"] {
-  margin-right: 10px;
-}
-
-.info-message {
-  margin-top: 5px;
-  font-size: 0.85rem;
-  color: #666;
-  font-style: italic;
-}
-
-.playlist-hidden-indicator {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 4px 8px;
+  padding: 12px 20px;
   border-radius: 4px;
-  font-size: 0.8rem;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1100;
+  animation: fadeInOut 2s ease;
 }
 
-.share-playlist-button {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 5px 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, 20px); }
+  15% { opacity: 1; transform: translate(-50%, 0); }
+  85% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -20px); }
 }
 
-.share-playlist-button:hover {
-  background-color: #218838;
-}
-
+/* Form actions */
 .form-actions {
   display: flex;
   justify-content: space-between;
   margin-top: 2rem;
 }
 
-.cancel-button, .submit-button {
+.cancel-button, .submit-button, .save-button {
   padding: 0.8rem 1.5rem;
   border-radius: 4px;
   font-weight: 500;
@@ -1030,33 +1222,38 @@ button {
   background-color: #e0e0e0;
 }
 
-.submit-button {
+.submit-button, .save-button {
   background-color: #0066cc;
   color: white;
 }
 
-.submit-button:hover {
+.submit-button:hover, .save-button:hover {
   background-color: #0052a3;
 }
 
-.submit-button:disabled {
+.submit-button:disabled, .save-button:disabled {
   background-color: #99c2ff;
   cursor: not-allowed;
 }
 
-/* Playlist Detail Page */
-.playlist-detail-content {
+/* Edit Playlist Page Specific Styles */
+.edit-playlist-page {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.edit-playlist-content {
   max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
 }
 
-.playlist-detail-header {
+.edit-playlist-header {
   background-color: white;
   border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
   margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .back-link {
@@ -1064,217 +1261,133 @@ button {
   align-items: center;
   gap: 0.5rem;
   color: #0066cc;
-  margin-bottom: 1rem;
-}
-
-.playlist-header-content {
   margin-bottom: 1.5rem;
-}
-
-.playlist-title {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.playlist-description {
-  color: #666;
-  margin-bottom: 1rem;
-}
-
-.playlist-creator, .playlist-video-count {
-  color: #888;
-  font-size: 0.9rem;
-}
-
-.playlist-creator {
-  margin-bottom: 0.3rem;
-}
-
-.edit-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: #0066cc;
-  color: white;
-  padding: 0.6rem 1rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  transition: background-color 0.3s;
-}
-
-.edit-button:hover {
-  background-color: #0052a3;
-}
-
-.playlist-videos {
-  background-color: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.playlist-videos h2 {
-  margin-bottom: 1.5rem;
-}
-
-.video-item {
-  border-bottom: 1px solid #eee;
-  padding: 1.5rem 0;
-  display: flex;
-  position: relative;
-}
-
-.video-item:last-child {
-  border-bottom: none;
-}
-
-.video-thumbnail {
-  width: 280px;
-  height: 160px;
-  margin-right: 1.5rem;
-  overflow: hidden;
-}
-
-.video-thumbnail iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-.invalid-video {
-  width: 100%;
-  height: 100%;
-  background-color: #eee;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #666;
-}
-
-.video-details {
-  flex: 1;
-}
-
-.video-title {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-}
-
-.video-description {
-  color: #666;
-  margin-bottom: 1rem;
-}
-
-.video-link {
-  display: inline-block;
-  color: #0066cc;
   font-weight: 500;
 }
 
-.video-actions {
-  position: absolute;
-  top: 1.5rem;
-  right: 0;
-  display: flex;
-  gap: 0.5rem;
+.back-link:hover {
+  text-decoration: underline;
 }
 
-.edit-video-button,
-.remove-video-button {
-  background-color: transparent;
-  border: none;
-  font-size: 1.2rem;
+.playlist-header-form .checkbox-group {
+  display: flex;
+  align-items: center;
+}
+
+.playlist-header-form .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   cursor: pointer;
+}
+
+.edit-playlist-videos {
+  background-color: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.edit-playlist-videos h2 {
+  margin-bottom: 1.5rem;
+}
+
+.add-video-section {
+  margin-bottom: 2rem;
+}
+
+.add-video-tabs {
+  display: flex;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.add-video-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border: none;
+  background: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.add-video-tab.active {
+  border-bottom: 2px solid #0066cc;
+  color: #0066cc;
+}
+
+.add-video-url-form {
+  margin-top: 1.5rem;
+}
+
+/* Create Playlist Page Specific Styles */
+.create-playlist-page {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.create-playlist-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Make textareas smaller in video forms */
+.add-video-url-form textarea {
+  min-height: 60px;
 }
 
 /* Profile Page Styles */
 .profile-page {
-  min-height: 100vh;
   background-color: #f5f5f5;
+  min-height: 100vh;
 }
 
 .profile-content {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
 }
 
 .page-title {
-  font-size: 2rem;
   margin-bottom: 1.5rem;
   color: #333;
-  text-align: center;
 }
 
 .profile-email {
   background-color: white;
-  padding: 1rem 1.5rem;
   border-radius: 8px;
+  padding: 1.5rem;
   margin-bottom: 2rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .profile-section {
   background-color: white;
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .section-header {
   display: flex;
   align-items: center;
+  gap: 0.8rem;
   margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid #eee;
 }
 
 .section-icon {
-  margin-right: 0.8rem;
   color: #0066cc;
   font-size: 1.4rem;
 }
 
-.section-header h2 {
-  font-size: 1.4rem;
-  color: #333;
-}
-
 .profile-form {
   margin-top: 1rem;
-}
-
-.profile-form .form-group {
-  margin-bottom: 1.5rem;
-}
-
-.profile-form label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-}
-
-.profile-form .form-control {
-  width: 100%;
-  padding: 0.8rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.profile-form .form-control:focus {
-  border-color: #0066cc;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
-}
-
-.success-message {
-  background-color: #d4edda;
-  color: #155724;
-  padding: 0.8rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
 }
 
 .update-button {
@@ -1283,8 +1396,8 @@ button {
   border: none;
   padding: 0.8rem 1.5rem;
   border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
+  font-weight: 500;
+  margin-top: 1rem;
   transition: background-color 0.3s;
 }
 
@@ -1297,117 +1410,192 @@ button {
   cursor: not-allowed;
 }
 
-/* Modal styling for video edit */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+.success-message {
+  color: #4CAF50;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  display: block;
+}
+
+/* Playlist Detail Page Styles */
+.playlist-detail-page {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.playlist-detail-header {
+  background-color: white;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.playlist-header-content {
+  margin-top: 0.7rem;
+}
+
+.playlist-title {
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+  color: #333;
+}
+
+.playlist-description {
+  color: #666;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.playlist-creator, .playlist-video-count {
+  color: #777;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.edit-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #0066cc;
+  color: white;
+  padding: 0.7rem 1.2rem;
+  border-radius: 4px;
+  font-weight: 500;
+  margin-top: 1rem;
+  transition: background-color 0.3s;
+}
+
+.edit-button:hover {
+  background-color: #0052a3;
+}
+
+.playlist-videos {
+  background-color: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.playlist-videos h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.video-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Video Item Styles */
+.video-item {
+  display: flex;
+  position: relative;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.video-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.video-position {
+  background-color: #0066cc;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-right: 1rem;
+  flex-shrink: 0;
 }
 
-.modal-content {
+.video-content {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+}
+
+.video-thumbnail {
+  width: 180px;
+  height: 100px;
+  margin-right: 1.5rem;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.video-thumbnail iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.invalid-video {
+  width: 100%;
+  height: 100%;
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.video-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.video-title {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.video-description {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+  line-height: 1.4;
+}
+
+.video-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #0066cc;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.video-link:hover {
+  text-decoration: underline;
+}
+
+.not-found, .no-videos {
+  text-align: center;
+  padding: 2rem;
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.modal-header h2 {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-.close-button {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #666;
-}
-
-.close-button:hover {
-  color: #333;
-}
-
-.video-edit-modal form {
-  padding: 1.5rem;
-}
-
-.video-edit-modal .form-group {
-  margin-bottom: 1.5rem;
-}
-
-.video-edit-modal label {
-  display: block;
-  margin-bottom: 0.5rem;
+.add-videos-link {
+  display: inline-block;
+  color: #0066cc;
+  margin-top: 1rem;
   font-weight: 500;
 }
 
-.video-edit-modal .form-control {
-  width: 100%;
-  padding: 0.8rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.video-edit-modal .form-control.error {
-  border-color: #e74c3c;
-}
-
-.video-edit-modal .error-message {
-  color: #e74c3c;
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.cancel-button, .save-button {
-  padding: 0.8rem 1.5rem;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  border: none;
-}
-
-.cancel-button {
-  background-color: #f5f5f5;
-  color: #333;
-}
-
-.cancel-button:hover {
-  background-color: #e0e0e0;
-}
-
-.save-button {
-  background-color: #0066cc;
-  color: white;
-}
-
-.save-button:hover {
-  background-color: #0052a3;
+.add-videos-link:hover {
+  text-decoration: underline;
 }

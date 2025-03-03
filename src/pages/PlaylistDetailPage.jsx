@@ -161,15 +161,13 @@ const PlaylistDetailPage = () => {
             <p className="playlist-video-count">
               {playlist.videos ? playlist.videos.length : 0} videos
             </p>
-          </div>
-          
-          {isOwner && (
-            <div className="playlist-actions">
+            
+            {isOwner && (
               <Link to={`/edit-playlist/${playlistId}`} className="edit-button">
                 <FaEdit /> Edit Playlist
               </Link>
-            </div>
-          )}
+            )}
+          </div>
         </div>
         
         <div className="playlist-videos">
@@ -183,9 +181,6 @@ const PlaylistDetailPage = () => {
                   video={video}
                   index={index}
                   playlistId={playlistId}
-                  isOwner={isOwner}
-                  onRemove={isOwner ? handleRemoveVideo : null}
-                  onEdit={isOwner ? handleEditVideo : null}
                 />
               ))}
             </div>
