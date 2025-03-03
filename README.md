@@ -7,6 +7,9 @@ A React application that allows users to create and share music playlists with Y
 - User authentication with Firebase (email/password)
 - Create, edit, and delete playlists
 - Add YouTube videos to playlists with automatic thumbnail extraction
+- Integrated YouTube search to easily find and add videos
+- Reordering videos within playlists using drag handles or up/down controls
+- Hide playlists from the main view (accessible only via direct link)
 - Responsive design with 4 playlists per row on desktop
 - Infinite scroll for browsing playlists
 - Search functionality for finding playlists
@@ -64,7 +67,20 @@ VITE_FIREBASE_PROJECT_ID=your_project_id_here
 VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket_here
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id_here
 VITE_FIREBASE_APP_ID=your_app_id_here
+
+# YouTube API Configuration (for video search functionality)
+# Get this from https://console.cloud.google.com/ by enabling the YouTube Data API v3
+VITE_YOUTUBE_API_KEY=your_youtube_api_key_here
 ```
+
+### YouTube API Setup
+
+For the YouTube search functionality, you need to:
+
+1. Create a project in the [Google Cloud Console](https://console.cloud.google.com/)
+2. Enable the YouTube Data API v3 for your project
+3. Create an API key (restrict it to the YouTube Data API for security)
+4. Add the API key to your `.env` file as `VITE_YOUTUBE_API_KEY`
 
 ## Testing with Firebase in Development
 

@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { createPlaylist, updatePlaylist, addVideoToPlaylist } from "../services/playlist";
-import { FaPlus, FaTimes } from "react-icons/fa";
+import { extractVideoId } from "../services/youtube";
+import { FaPlus, FaTimes, FaLink, FaSearch, FaArrowUp, FaArrowDown } from "react-icons/fa";
+import YouTubeSearch from "./YouTubeSearch";
 
 const PlaylistForm = ({ existingPlaylist = null }) => {
   const { currentUser, userData } = useAuth();
@@ -15,6 +17,7 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
     isHidden: existingPlaylist?.isHidden || false,
   });
 
+  const [activeTab, setActiveTab] = useState("url"); // 'url' or 'search'
   const [videoUrl, setVideoUrl] = useState("");
   const [videoTitle, setVideoTitle] = useState("");
   const [videoDescription, setVideoDescription] = useState("");
@@ -60,13 +63,7 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
     }
     
     // Extract thumbnail from YouTube URL
-    const getYouTubeVideoId = (url) => {
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-      const match = url.match(regExp);
-      return match && match[2].length === 11 ? match[2] : null;
-    };
-    
-    const videoId = getYouTubeVideoId(videoUrl);
+    const videoId = extractVideoId(videoUrl);
     const thumbnailUrl = videoId 
       ? `https://img.youtube.com/vi/${videoId}/0.jpg` 
       : null;
@@ -86,9 +83,46 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
     setErrors({ ...errors, videoUrl: null, videos: null });
   };
 
+  // Handle video from YouTube search
+  const handleSelectVideo = (video) => {
+    const newVideo = {
+      url: video.url,
+      title: video.title,
+      description: video.description,
+      thumbnailUrl: video.thumbnailUrl,
+      addedAt: new Date().toISOString(),
+    };
+    
+    setVideos([...videos, newVideo]);
+    setActiveTab("url"); // Switch back to URL tab after adding
+    setErrors({ ...errors, videos: null });
+  };
+
   const handleRemoveVideo = (index) => {
     const updatedVideos = [...videos];
     updatedVideos.splice(index, 1);
+    setVideos(updatedVideos);
+  };
+  
+  const moveVideoUp = (index) => {
+    if (index === 0) return; // Already at the top
+    
+    const updatedVideos = [...videos];
+    const temp = updatedVideos[index];
+    updatedVideos[index] = updatedVideos[index - 1];
+    updatedVideos[index - 1] = temp;
+    
+    setVideos(updatedVideos);
+  };
+  
+  const moveVideoDown = (index) => {
+    if (index === videos.length - 1) return; // Already at the bottom
+    
+    const updatedVideos = [...videos];
+    const temp = updatedVideos[index];
+    updatedVideos[index] = updatedVideos[index + 1];
+    updatedVideos[index + 1] = temp;
+    
     setVideos(updatedVideos);
   };
 
@@ -204,6 +238,26 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
                   <h4>{video.title}</h4>
                   {video.description && <p>{video.description}</p>}
                 </div>
+                <div className="video-reorder-controls">
+                  <button
+                    type="button"
+                    className="video-reorder-button"
+                    onClick={() => moveVideoUp(index)}
+                    disabled={index === 0}
+                    title="Move up"
+                  >
+                    <FaArrowUp />
+                  </button>
+                  <button
+                    type="button"
+                    className="video-reorder-button"
+                    onClick={() => moveVideoDown(index)}
+                    disabled={index === videos.length - 1}
+                    title="Move down"
+                  >
+                    <FaArrowDown />
+                  </button>
+                </div>
                 <button
                   type="button"
                   className="remove-video"
@@ -217,50 +271,74 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
           
           <div className="add-video-form">
             <h4>Add Video</h4>
-            <div className="form-group">
-              <label htmlFor="videoUrl">YouTube URL *</label>
-              <input
-                type="text"
-                id="videoUrl"
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
-                className={errors.videoUrl ? "error" : ""}
-                placeholder="https://www.youtube.com/watch?v=..."
-              />
-              {errors.videoUrl && (
-                <div className="error-message">{errors.videoUrl}</div>
-              )}
+            
+            <div className="add-video-tabs">
+              <button
+                type="button"
+                className={`add-video-tab ${activeTab === "url" ? "active" : ""}`}
+                onClick={() => setActiveTab("url")}
+              >
+                <FaLink /> Direct URL
+              </button>
+              <button
+                type="button"
+                className={`add-video-tab ${activeTab === "search" ? "active" : ""}`}
+                onClick={() => setActiveTab("search")}
+              >
+                <FaSearch /> Search YouTube
+              </button>
             </div>
             
-            <div className="form-group">
-              <label htmlFor="videoTitle">Video Title</label>
-              <input
-                type="text"
-                id="videoTitle"
-                value={videoTitle}
-                onChange={(e) => setVideoTitle(e.target.value)}
-                placeholder="Optional title for the video"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="videoDescription">Video Description</label>
-              <textarea
-                id="videoDescription"
-                value={videoDescription}
-                onChange={(e) => setVideoDescription(e.target.value)}
-                rows="2"
-                placeholder="Optional description"
-              />
-            </div>
-            
-            <button
-              type="button"
-              className="add-video-button"
-              onClick={handleAddVideo}
-            >
-              <FaPlus /> Add Video
-            </button>
+            {activeTab === "url" ? (
+              <>
+                <div className="form-group">
+                  <label htmlFor="videoUrl">YouTube URL *</label>
+                  <input
+                    type="text"
+                    id="videoUrl"
+                    value={videoUrl}
+                    onChange={(e) => setVideoUrl(e.target.value)}
+                    className={errors.videoUrl ? "error" : ""}
+                    placeholder="https://www.youtube.com/watch?v=..."
+                  />
+                  {errors.videoUrl && (
+                    <div className="error-message">{errors.videoUrl}</div>
+                  )}
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="videoTitle">Video Title</label>
+                  <input
+                    type="text"
+                    id="videoTitle"
+                    value={videoTitle}
+                    onChange={(e) => setVideoTitle(e.target.value)}
+                    placeholder="Optional title for the video"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="videoDescription">Video Description</label>
+                  <textarea
+                    id="videoDescription"
+                    value={videoDescription}
+                    onChange={(e) => setVideoDescription(e.target.value)}
+                    rows="2"
+                    placeholder="Optional description"
+                  />
+                </div>
+                
+                <button
+                  type="button"
+                  className="add-video-button"
+                  onClick={handleAddVideo}
+                >
+                  <FaPlus /> Add Video
+                </button>
+              </>
+            ) : (
+              <YouTubeSearch onSelectVideo={handleSelectVideo} />
+            )}
           </div>
         </div>
         
