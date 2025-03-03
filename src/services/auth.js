@@ -2,10 +2,13 @@ import {
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signOut, 
-  onAuthStateChanged 
+  onAuthStateChanged,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential
 } from "firebase/auth";
 import { auth, db } from "./firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 
 // Register a new user
 export const registerUser = async (email, password, username) => {
@@ -64,4 +67,53 @@ export const getCurrentUserData = async (userId) => {
 // Subscribe to auth state changes
 export const subscribeToAuthChanges = (callback) => {
   return onAuthStateChanged(auth, callback);
+};
+
+// Update user nickname (username)
+export const updateUserNickname = async (userId, newUsername) => {
+  try {
+    // Update the username in Firestore
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, {
+      username: newUsername,
+      updatedAt: new Date().toISOString()
+    });
+    
+    return { success: true };
+  } catch (error) {
+    return { error };
+  }
+};
+
+// Reauthenticate the user (required for sensitive operations like password change)
+export const reauthenticateUser = async (currentPassword) => {
+  try {
+    const user = auth.currentUser;
+    const credential = EmailAuthProvider.credential(user.email, currentPassword);
+    
+    await reauthenticateWithCredential(user, credential);
+    return { success: true };
+  } catch (error) {
+    return { error };
+  }
+};
+
+// Update user password
+export const updateUserPassword = async (currentPassword, newPassword) => {
+  try {
+    const user = auth.currentUser;
+    
+    // First reauthenticate
+    const { success, error } = await reauthenticateUser(currentPassword);
+    if (!success) {
+      return { error: error || "Authentication failed" };
+    }
+    
+    // Then update password
+    await updatePassword(user, newPassword);
+    
+    return { success: true };
+  } catch (error) {
+    return { error };
+  }
 };

@@ -156,6 +156,8 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
             ...formData,
             videos,
             creatorName: userData?.username || "Anonymous",
+            // Store the userId to enable dynamic lookup of latest username
+            userId: currentUser.uid,
           },
           currentUser.uid
         );

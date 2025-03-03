@@ -1,8 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaEyeSlash } from "react-icons/fa";
+import { getCurrentUserData } from "../services/auth";
 
 const PlaylistCard = ({ playlist, showHiddenIndicator = false }) => {
+  const [creatorName, setCreatorName] = useState(playlist.creatorName || "Anonymous");
+  
+  useEffect(() => {
+    const fetchCreatorName = async () => {
+      if (playlist.userId) {
+        try {
+          const { userData, error } = await getCurrentUserData(playlist.userId);
+          if (!error && userData && userData.username) {
+            setCreatorName(userData.username);
+          }
+        } catch (error) {
+          console.error("Error fetching creator data:", error);
+        }
+      }
+    };
+    
+    fetchCreatorName();
+  }, [playlist.userId]);
   // Default thumbnail if none is provided
   const defaultThumbnail = "https://via.placeholder.com/300x300?text=Playlist";
   
@@ -36,7 +55,7 @@ const PlaylistCard = ({ playlist, showHiddenIndicator = false }) => {
             </p>
           )}
           <p className="playlist-card-creator">
-            Created by: {playlist.creatorName || "Anonymous"}
+            Created by: {creatorName}
           </p>
         </div>
       </Link>

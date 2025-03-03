@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { getCurrentUserData } from "../services/auth";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getPlaylist, removeVideoFromPlaylist } from "../services/playlist";
+import { getPlaylist, removeVideoFromPlaylist, updateVideoInPlaylist } from "../services/playlist";
 import Navbar from "../components/Navbar";
 import VideoItem from "../components/VideoItem";
 import { FaEdit, FaArrowLeft } from "react-icons/fa";
@@ -13,6 +14,8 @@ const PlaylistDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [removingIndex, setRemovingIndex] = useState(null);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [creatorName, setCreatorName] = useState("");
 
   // Check if the current user is the owner of this playlist
   const isOwner = currentUser && playlist?.userId === currentUser.uid;
@@ -31,6 +34,21 @@ const PlaylistDetailPage = () => {
         }
         
         setPlaylist(playlist);
+        
+        // Set initial creator name from playlist data
+        setCreatorName(playlist.creatorName || "Anonymous");
+        
+        // If userId exists, fetch the latest username
+        if (playlist.userId) {
+          try {
+            const { userData, error } = await getCurrentUserData(playlist.userId);
+            if (!error && userData && userData.username) {
+              setCreatorName(userData.username);
+            }
+          } catch (err) {
+            console.error("Error fetching creator data:", err);
+          }
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -40,6 +58,31 @@ const PlaylistDetailPage = () => {
 
     fetchPlaylist();
   }, [playlistId]);
+
+  // Handle video editing
+  const handleEditVideo = async (index, updatedVideoData) => {
+    try {
+      setEditingIndex(index);
+      const { error, video } = await updateVideoInPlaylist(playlistId, index, updatedVideoData);
+      
+      if (error) {
+        throw new Error(error);
+      }
+      
+      // Update the playlist in state
+      const updatedVideos = [...playlist.videos];
+      updatedVideos[index] = video;
+      
+      setPlaylist({
+        ...playlist,
+        videos: updatedVideos
+      });
+    } catch (err) {
+      setError(`Failed to update video: ${err.message}`);
+    } finally {
+      setEditingIndex(null);
+    }
+  };
 
   // Handle video removal
   const handleRemoveVideo = async (index) => {
@@ -113,7 +156,7 @@ const PlaylistDetailPage = () => {
               <p className="playlist-description">{playlist.description}</p>
             )}
             <p className="playlist-creator">
-              Created by: {playlist.creatorName || "Anonymous"}
+              Created by: {creatorName}
             </p>
             <p className="playlist-video-count">
               {playlist.videos ? playlist.videos.length : 0} videos
@@ -142,6 +185,7 @@ const PlaylistDetailPage = () => {
                   playlistId={playlistId}
                   isOwner={isOwner}
                   onRemove={isOwner ? handleRemoveVideo : null}
+                  onEdit={isOwner ? handleEditVideo : null}
                 />
               ))}
             </div>

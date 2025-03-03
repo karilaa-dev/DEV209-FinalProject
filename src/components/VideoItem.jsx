@@ -1,7 +1,9 @@
-import React from "react";
-import { FaTrash } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaTrash, FaEdit } from "react-icons/fa";
+import VideoEditModal from "./VideoEditModal";
 
-const VideoItem = ({ video, index, playlistId, isOwner, onRemove }) => {
+const VideoItem = ({ video, index, playlistId, isOwner, onRemove, onEdit }) => {
+  const [showEditModal, setShowEditModal] = useState(false);
   // Extract video ID from YouTube URL
   const getYouTubeVideoId = (url) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -48,9 +50,27 @@ const VideoItem = ({ video, index, playlistId, isOwner, onRemove }) => {
         </a>
       </div>
       {isOwner && (
-        <button className="remove-video-button" onClick={handleRemove}>
-          <FaTrash />
-        </button>
+        <div className="video-actions">
+          <button className="edit-video-button" onClick={() => setShowEditModal(true)}>
+            <FaEdit />
+          </button>
+          <button className="remove-video-button" onClick={handleRemove}>
+            <FaTrash />
+          </button>
+        </div>
+      )}
+      
+      {showEditModal && (
+        <VideoEditModal 
+          video={video}
+          onSave={(updatedVideoData) => {
+            if (onEdit) {
+              onEdit(index, updatedVideoData);
+            }
+            setShowEditModal(false);
+          }}
+          onCancel={() => setShowEditModal(false)}
+        />
       )}
     </div>
   );

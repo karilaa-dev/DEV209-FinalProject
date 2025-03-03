@@ -252,3 +252,39 @@ export const removeVideoFromPlaylist = async (playlistId, videoIndex) => {
     return { error };
   }
 };
+
+// Update a video's info in a playlist
+export const updateVideoInPlaylist = async (playlistId, videoIndex, updatedVideoData) => {
+  try {
+    const playlistRef = doc(db, "playlists", playlistId);
+    const playlistDoc = await getDoc(playlistRef);
+    
+    if (!playlistDoc.exists()) {
+      return { error: "Playlist not found" };
+    }
+    
+    const playlistData = playlistDoc.data();
+    const videos = playlistData.videos || [];
+    
+    if (videoIndex < 0 || videoIndex >= videos.length) {
+      return { error: "Video index out of bounds" };
+    }
+    
+    // Update the video at the specified index, preserving other properties like addedAt
+    const updatedVideos = [...videos];
+    updatedVideos[videoIndex] = {
+      ...videos[videoIndex],
+      ...updatedVideoData,
+      updatedAt: new Date().toISOString()
+    };
+    
+    await updateDoc(playlistRef, {
+      videos: updatedVideos,
+      updatedAt: new Date().toISOString()
+    });
+    
+    return { success: true, video: updatedVideos[videoIndex] };
+  } catch (error) {
+    return { error };
+  }
+};
