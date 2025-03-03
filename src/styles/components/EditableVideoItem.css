@@ -1,0 +1,115 @@
+/* EditableVideoItem styles */
+.editable-video-item {
+  display: flex;
+  background-color: white;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  position: relative;
+  align-items: center;
+}
+
+.editable-video-item .video-thumbnail {
+  width: 120px;
+  height: 68px;
+  margin-right: 1rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.editable-video-item .video-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.editable-video-item .video-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.editable-video-item .video-title {
+  font-size: 1rem;
+  margin-bottom: 0.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.editable-video-item .video-description {
+  color: #666;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
+
+.editable-video-item .video-link {
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.editable-video-item .video-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-left: 1rem;
+}
+
+.editable-video-item .reorder-actions,
+.editable-video-item .edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editable-video-item .move-video-up,
+.editable-video-item .move-video-down,
+.editable-video-item .edit-video-button,
+.editable-video-item .remove-video-button {
+  background-color: #f5f5f5;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.editable-video-item .move-video-up:hover,
+.editable-video-item .move-video-down:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-2px);
+}
+
+.editable-video-item .edit-video-button {
+  background-color: #0066cc;
+  color: white;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.editable-video-item .edit-video-button:hover {
+  background-color: #0052a3;
+  transform: scale(1.1);
+}
+
+.editable-video-item .remove-video-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.editable-video-item .remove-video-button:hover {
+  background-color: #c0392b;
+}

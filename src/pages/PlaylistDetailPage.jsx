@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { getPlaylist, removeVideoFromPlaylist, updateVideoInPlaylist } from "../services/playlist";
 import Navbar from "../components/Navbar";
 import VideoItem from "../components/VideoItem";
+import VideoPlayerPopup from "../components/VideoPlayerPopup";
 import { FaEdit, FaArrowLeft } from "react-icons/fa";
 
 const PlaylistDetailPage = () => {
@@ -16,6 +17,8 @@ const PlaylistDetailPage = () => {
   const [removingIndex, setRemovingIndex] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
   const [creatorName, setCreatorName] = useState("");
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [selectedVideoIndex, setSelectedVideoIndex] = useState(null);
 
   // Check if the current user is the owner of this playlist
   const isOwner = currentUser && playlist?.userId === currentUser.uid;
@@ -140,6 +143,27 @@ const PlaylistDetailPage = () => {
     );
   }
 
+  // Handle opening the video player popup
+  const handleOpenVideo = (video, index) => {
+    setSelectedVideo(video);
+    setSelectedVideoIndex(index);
+  };
+
+  // Handle closing the video player popup
+  const handleCloseVideo = () => {
+    setSelectedVideo(null);
+    setSelectedVideoIndex(null);
+  };
+
+  // Handle playing the next video in playlist
+  const handleNextVideo = () => {
+    if (playlist.videos && selectedVideoIndex < playlist.videos.length - 1) {
+      const nextIndex = selectedVideoIndex + 1;
+      setSelectedVideo(playlist.videos[nextIndex]);
+      setSelectedVideoIndex(nextIndex);
+    }
+  };
+
   return (
     <div className="playlist-detail-page">
       <Navbar />
@@ -181,6 +205,7 @@ const PlaylistDetailPage = () => {
                   video={video}
                   index={index}
                   playlistId={playlistId}
+                  onClick={() => handleOpenVideo(video, index)}
                 />
               ))}
             </div>
@@ -196,6 +221,16 @@ const PlaylistDetailPage = () => {
           )}
         </div>
       </div>
+
+      {/* Video Player Popup */}
+      {selectedVideo && (
+        <VideoPlayerPopup
+          video={selectedVideo}
+          onClose={handleCloseVideo}
+          onNext={handleNextVideo}
+          hasNext={playlist.videos && selectedVideoIndex < playlist.videos.length - 1}
+        />
+      )}
     </div>
   );
 };

@@ -1,0 +1,24 @@
+/* Main CSS entry point - Imports all styles */
+
+/* Base styles */
+@import './base/Base.css';
+
+/* Component styles */
+@import './components/Forms.css';
+@import './components/Navbar.css';
+@import './components/SearchBar.css';
+@import './components/PlaylistCard.css';
+@import './components/VideoItem.css';
+@import './components/EditableVideoItem.css';
+@import './components/Modal.css';
+@import './components/YouTubeSearch.css';
+@import './components/VideoPlayerPopup.css';
+
+/* Page styles */
+@import './pages/HomePage.css';
+@import './pages/LoginPage.css';
+@import './pages/DashboardPage.css';
+@import './pages/CreatePlaylistPage.css';
+@import './pages/EditPlaylistPage.css';
+@import './pages/PlaylistDetailPage.css';
+@import './pages/ProfilePage.css';
