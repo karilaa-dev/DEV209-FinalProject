@@ -1,0 +1,14 @@
+# Firebase Configuration
+# Insert your Firebase project credentials here
+# These values will NOT be committed to the repository
+
+VITE_FIREBASE_API_KEY=AIzaSyBWUsrhsGmRdmXnpgl3PrH8o5qj6dTvRbI
+VITE_FIREBASE_AUTH_DOMAIN=dev209-finalproject.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=dev209-finalproject
+VITE_FIREBASE_STORAGE_BUCKET=dev209-finalproject.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=579160278144
+VITE_FIREBASE_APP_ID=1:579160278144:web:a97a84171232ba5fecd265
+
+# YouTube API Configuration
+# You need to enable the YouTube Data API v3 for your project
+VITE_YOUTUBE_API_KEY=AIzaSyDUNmdFS6gphU9CLYcrGyejmhAqsNJeZ0Q
