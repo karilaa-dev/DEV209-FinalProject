@@ -1,0 +1,132 @@
+/* Enhanced Form Elements - Consistent styling across the app */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: white;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="password"]:hover,
+input[type="url"]:hover,
+input[type="search"]:hover,
+textarea:hover,
+select:hover {
+  border-color: #b3b3b3;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+  outline: none;
+}
+
+input.error,
+textarea.error,
+select.error {
+  border-color: #e74c3c;
+  background-color: #fff8f8;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+  display: block;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #444;
+}
+
+/* Checkbox styling consistency */
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+/* Placeholder styling */
+::placeholder {
+  color: #aaa;
+  opacity: 1;
+}
+
+/* Disabled input styling */
+input:disabled,
+textarea:disabled,
+select:disabled {
+  background-color: #f5f5f5;
+  border-color: #ddd;
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* Form actions */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+.cancel-button, .submit-button, .save-button {
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  border: none;
+}
+
+.cancel-button {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.cancel-button:hover {
+  background-color: #e0e0e0;
+}
+
+.submit-button, .save-button {
+  background-color: #0066cc;
+  color: white;
+}
+
+.submit-button:hover, .save-button:hover {
+  background-color: #0052a3;
+}
+
+.submit-button:disabled, .save-button:disabled {
+  background-color: #99c2ff;
+  cursor: not-allowed;
+}

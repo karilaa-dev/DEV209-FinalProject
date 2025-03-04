@@ -1,17 +1,141 @@
-## Running React on Replit
+# Music Playlist Creator
 
-[React](https://reactjs.org/) is a popular JavaScript library for building user interfaces.
+A React application that allows users to create and share music playlists with YouTube video links.
 
-[Vite](https://vitejs.dev/) is a blazing fast frontend build tool that includes features like Hot Module Reloading (HMR), optimized builds, and TypeScript support out of the box.
+## Features
 
-Using the two in conjunction is one of the fastest ways to build a web app.
+- User authentication with Firebase (email/password)
+- Create, edit, and delete playlists
+- Add YouTube videos to playlists with automatic thumbnail extraction
+- Integrated YouTube search to easily find and add videos
+- Reordering videos within playlists using drag handles or up/down controls
+- Hide playlists from the main view (accessible only via direct link)
+- Responsive design with 4 playlists per row on desktop
+- Infinite scroll for browsing playlists
+- Search functionality for finding playlists
 
-### Getting Started
-- Hit run
-- Edit [App.jsx](#src/App.jsx) and watch it live update!
+## Prerequisites
 
-By default, Replit runs the `dev` script, but you can configure it by changing the `run` field in the [configuration file](#.replit). Here are the vite docs for [serving production websites](https://vitejs.dev/guide/build.html)
+- Node.js (v14 or higher)
+- npm or yarn
+- Firebase account
 
-### Typescript
+## Setup
 
-Just rename any file from `.jsx` to `.tsx`. You can also try our [TypeScript Template](https://replit.com/@replit/React-TypeScript)
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd <repository-folder>
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Configure Firebase:
+   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
+   - Enable Email/Password authentication in the Authentication section
+   - Create a Firestore database in Test mode
+   - Get your Firebase configuration (Project settings > General > Your apps > Firebase SDK snippet > Config)
+   - Create a `.env` file in the root directory based on the `.env.example` template
+   - Add your Firebase configuration values to the `.env` file
+
+## Running Locally
+
+Start the development server:
+```bash
+npm run dev
+```
+
+The application will be available at [http://localhost:5173](http://localhost:5173).
+
+## Environment Variables
+
+This project uses environment variables to securely store Firebase configuration. The following files are used:
+
+- `.env`: Contains your actual Firebase configuration (not committed to git)
+- `.env.example`: A template showing the required environment variables (committed to git)
+
+When setting up the project, copy `.env.example` to `.env` and add your Firebase credentials:
+
+```bash
+# Firebase Configuration
+VITE_FIREBASE_API_KEY=your_api_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain_here
+VITE_FIREBASE_PROJECT_ID=your_project_id_here
+VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket_here
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id_here
+VITE_FIREBASE_APP_ID=your_app_id_here
+
+# YouTube API Configuration (for video search functionality)
+# Get this from https://console.cloud.google.com/ by enabling the YouTube Data API v3
+VITE_YOUTUBE_API_KEY=your_youtube_api_key_here
+```
+
+### YouTube API Setup
+
+For the YouTube search functionality, you need to:
+
+1. Create a project in the [Google Cloud Console](https://console.cloud.google.com/)
+2. Enable the YouTube Data API v3 for your project
+3. Create an API key (restrict it to the YouTube Data API for security)
+4. Add the API key to your `.env` file as `VITE_YOUTUBE_API_KEY`
+
+## Testing with Firebase in Development
+
+To test Firebase functionality in your local development environment:
+
+1. Set up your Firebase project as described in the Setup section
+2. Add your Firebase configuration to the `.env` file
+3. Run the local development server (`npm run dev`)
+4. The app will connect to your production Firebase project while running locally
+
+## Building for Production
+
+```bash
+npm run build
+```
+
+The build files will be in the `dist` directory, which you can then deploy to your hosting provider of choice.
+
+## Firestore Data Structure
+
+### Users Collection
+- Document ID: User's UID from Firebase Authentication
+- Fields:
+  - `username`: String
+  - `email`: String
+  - `createdAt`: Timestamp
+
+### Playlists Collection
+- Document ID: Auto-generated
+- Fields:
+  - `name`: String
+  - `description`: String (optional)
+  - `userId`: String (reference to user)
+  - `creatorName`: String
+  - `createdAt`: Timestamp
+  - `updatedAt`: Timestamp
+  - `videos`: Array of Objects
+    - `url`: String (YouTube URL)
+    - `title`: String
+    - `description`: String (optional)
+    - `thumbnailUrl`: String
+    - `addedAt`: Timestamp
+
+## Firestore Indexes
+
+There might be a delay when composite indexes are first being built. The application includes fallback logic to handle this case. If you see error messages related to indexes, you can:
+
+1. Wait for the indexes to build (can take a few minutes)
+2. Manually create the required indexes in Firebase Console:
+   - Go to Firestore > Indexes > Composite
+   - Add index for collection `playlists`:
+     - Fields: `userId` (Ascending), `createdAt` (Descending)
+     - Query scope: Collection
+
+## Known Limitations
+
+- Firestore doesn't support full-text search natively. The search feature in this app does client-side filtering, which isn't ideal for large datasets. In a production app, consider using services like Algolia or Elastic Search.
+- The app uses a simple authentication approach. For production use, consider adding more secure options and validation.

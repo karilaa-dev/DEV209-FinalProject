@@ -1,21 +1,39 @@
 import React from 'react';
-import './App.css';
-import { Link } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import './styles/index.css';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import DashboardPage from './pages/DashboardPage';
+import CreatePlaylistPage from './pages/CreatePlaylistPage';
+import EditPlaylistPage from './pages/EditPlaylistPage';
+import PlaylistDetailPage from './pages/PlaylistDetailPage';
+import ProfilePage from './pages/ProfilePage';
+
+// Protected route component
+const ProtectedRoute = ({ children }) => {
+  const isAuthenticated = localStorage.getItem('user') !== null;
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+  
+  return children;
+};
 
 const App = () => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', padding: '20px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-        <h1>My Webpage</h1>
-        <div>
-          <Link to="/login">
-            <button style={{ marginRight: '10px' }}>Login</button>
-          </Link>
-          <Link to="/signup">
-            <button>Signup</button>
-          </Link>
-        </div>
-      </div>
+    <div className="app">
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/create-playlist" element={<CreatePlaylistPage />} />
+        <Route path="/edit-playlist/:playlistId" element={<EditPlaylistPage />} />
+        <Route path="/playlist/:playlistId" element={<PlaylistDetailPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+      </Routes>
     </div>
   );
 };

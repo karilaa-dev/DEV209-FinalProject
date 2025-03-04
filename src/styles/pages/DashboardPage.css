@@ -1,0 +1,41 @@
+/* Dashboard page styles */
+.dashboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.create-playlist-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #0066cc;
+  color: white;
+  padding: 0.8rem 1.2rem;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.create-playlist-button:hover {
+  background-color: #0052a3;
+}
+
+.no-playlists {
+  text-align: center;
+  padding: 2rem;
+}
+
+.create-playlist-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #0066cc;
+  font-weight: 500;
+}
