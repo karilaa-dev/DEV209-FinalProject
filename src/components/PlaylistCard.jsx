@@ -66,12 +66,14 @@ const PlaylistCard = ({ playlist, showHiddenIndicator = false }) => {
                                 : playlist.description}
                         </p>
                     )}
-                    <p className="playlist-card-creator">
-                        Created by: {creatorName}
-                    </p>
-                    <p className="playlist-card-views">
-                        Views: {viewCount}
-                    </p>
+                    <div className="playlist-card-footer">
+                        <p className="playlist-card-creator">
+                            Created by: {creatorName}
+                        </p>
+                        <p className="playlist-card-views">
+                            Views: {viewCount}
+                        </p>
+                    </div>
                 </div>
             </Link>
         </div>
