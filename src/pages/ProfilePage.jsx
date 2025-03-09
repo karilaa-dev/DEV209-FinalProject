@@ -6,7 +6,7 @@ import Navbar from "../components/Navbar";
 import { FaUser, FaKey } from "react-icons/fa";
 
 const ProfilePage = () => {
-  const { currentUser, userData } = useAuth();
+  const { currentUser, userData, setUserData } = useAuth(); // Add setUserData to update userData
   const navigate = useNavigate();
   
   // State for nickname section
@@ -52,8 +52,8 @@ const ProfilePage = () => {
       
       if (success) {
         setUsernameSuccess(true);
-        // NOTE: The AuthContext will automatically update with the new user data
-        // due to the Firestore listener in AuthProvider
+        // Update userData directly to reflect changes immediately
+        setUserData((prevData) => ({ ...prevData, username }));
       }
     } catch (err) {
       setUsernameError(err.message);

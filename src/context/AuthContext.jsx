@@ -41,6 +41,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     currentUser,
     userData,
+    setUserData, // Add setUserData to the context value
     isAuthenticated: !!currentUser,
     loading
   };

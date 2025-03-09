@@ -111,9 +111,14 @@
   overflow: hidden;
 }
 
-.playlist-card-creator {
+.playlist-card-creator, .playlist-card-views {
   color: #888;
   font-size: 0.8rem;
+}
+
+.playlist-card-footer {
+  display: flex;
+  justify-content: space-between;
 }
 
 /* User playlist card in dashboard */
