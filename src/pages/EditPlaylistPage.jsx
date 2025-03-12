@@ -382,11 +382,7 @@ const EditPlaylistPage = () => {
       
       <div className="edit-playlist-content">
         <div className="edit-playlist-header">
-          <Link to={`/playlist/${playlistId}`} className="back-link">
-            <FaArrowLeft /> Back to Playlist
-          </Link>
-          
-          <form onSubmit={handleSubmit} className="playlist-header-form">
+                  <form onSubmit={handleSubmit} className="playlist-header-form">
             <div className="form-group">
               <label htmlFor="name">Playlist Name *</label>
               <input
