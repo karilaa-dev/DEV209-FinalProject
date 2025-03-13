@@ -21,7 +21,6 @@
   margin-bottom: 1.5rem;
 }
 
-/* Loading and error styles */
 .loading, .error, .no-playlists {
   text-align: center;
   padding: 2rem;
