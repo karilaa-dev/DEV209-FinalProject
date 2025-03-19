@@ -10,7 +10,8 @@ import {
   where, 
   orderBy, 
   limit, 
-  startAfter 
+  startAfter, 
+  serverTimestamp 
 } from "firebase/firestore";
 import { db } from "./firebase";
 
@@ -21,13 +22,16 @@ export const createPlaylist = async (playlistData, userId) => {
       ...playlistData,
       userId,
       isHidden: playlistData.isHidden || false, // Add support for hiding playlists
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      isFavorite: playlistData.isFavorite || false, // Add support for favorite playlists
+      viewCount: 0, // Initialize viewCount to 0
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     };
     
     const docRef = await addDoc(collection(db, "playlists"), playlistWithUser);
     return { id: docRef.id, ...playlistWithUser };
   } catch (error) {
+    console.error("Error creating playlist: ", error);
     return { error };
   }
 };
@@ -286,5 +290,17 @@ export const updateVideoInPlaylist = async (playlistId, videoIndex, updatedVideo
     return { success: true, video: updatedVideos[videoIndex] };
   } catch (error) {
     return { error };
+  }
+};
+
+// Update view count for a playlist
+export const updateViewCount = async (playlistId) => {
+  try {
+    const playlistDocRef = doc(db, "playlists", playlistId);
+    await updateDoc(playlistDocRef, {
+      viewCount: increment(1)
+    });
+  } catch (error) {
+    console.error("Error updating view count: ", error);
   }
 };
