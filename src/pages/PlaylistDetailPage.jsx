@@ -208,6 +208,11 @@ const PlaylistDetailPage = () => {
                                 <FaStar className={isFavorite ? "favorite-checked" : "favorite-unchecked"} />
                             </div>
                             <h1 className="playlist-title">{playlist.name}</h1>
+                            {isOwner && (
+                                <Link to={`/edit-playlist/${playlistId}`} className="edit-button">
+                                    <FaEdit /> Edit Playlist
+                                </Link>
+                            )}
                         </div>
                         {playlist.description && (
                             <p className="playlist-description">{playlist.description}</p>
@@ -220,11 +225,7 @@ const PlaylistDetailPage = () => {
                         </p>
 
                         <div className="playlist-actions">
-                            {isOwner && (
-                                <Link to={`/edit-playlist/${playlistId}`} className="edit-button">
-                                    <FaEdit /> Edit Playlist
-                                </Link>
-                            )}
+                            {/* Edit button moved to title container */}
                         </div>
                         <p className="playlist-view-count">
                             {playlist.viewCount || 0} views
