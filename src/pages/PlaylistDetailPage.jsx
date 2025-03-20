@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getCurrentUserData } from "../services/auth";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getPlaylist, removeVideoFromPlaylist, updateVideoInPlaylist, updateViewCount, updatePlaylistsWithoutViewCount } from "../services/playlist";
+import { getPlaylist, removeVideoFromPlaylist, updateVideoInPlaylist, updateViewCount } from "../services/playlist";
 import Navbar from "../components/Navbar";
 import VideoItem from "../components/VideoItem";
 import VideoPlayerPopup from "../components/VideoPlayerPopup";
@@ -26,22 +26,6 @@ const PlaylistDetailPage = () => {
 
     // Check if the current user is the owner of this playlist
     const isOwner = currentUser && playlist?.userId === currentUser.uid;
-
-    // Update playlists without viewCount field
-    useEffect(() => {
-        const updateMissingViewCounts = async () => {
-            try {
-                const result = await updatePlaylistsWithoutViewCount();
-                if (result.updatedCount > 0) {
-                    console.log(`Updated ${result.updatedCount} playlists with missing view counts`);
-                }
-            } catch (err) {
-                console.error("Error updating playlists without view count:", err);
-            }
-        };
-        
-        updateMissingViewCounts();
-    }, []);
 
     // Fetch playlist data and update view count
     useEffect(() => {

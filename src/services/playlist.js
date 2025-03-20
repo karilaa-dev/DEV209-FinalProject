@@ -357,33 +357,3 @@ export const updateViewCount = async (playlistId) => {
     return { error };
   }
 };
-
-// Update playlists without viewCount field
-export const updatePlaylistsWithoutViewCount = async () => {
-  try {
-    // Get all playlists
-    const querySnapshot = await getDocs(collection(db, "playlists"));
-    
-    // Update playlists without viewCount
-    const updatePromises = [];
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      if (data.viewCount === undefined) {
-        updatePromises.push(
-          updateDoc(doc.ref, { viewCount: 0 })
-        );
-      }
-    });
-    
-    // Wait for all updates to complete
-    await Promise.all(updatePromises);
-    
-    return { 
-      success: true, 
-      updatedCount: updatePromises.length 
-    };
-  } catch (error) {
-    console.error("Error updating playlists without view count: ", error);
-    return { error };
-  }
-};

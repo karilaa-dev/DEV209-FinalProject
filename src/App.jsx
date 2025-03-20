@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import './styles/index.css';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -10,17 +10,6 @@ import CreatePlaylistPage from './pages/CreatePlaylistPage';
 import EditPlaylistPage from './pages/EditPlaylistPage';
 import PlaylistDetailPage from './pages/PlaylistDetailPage';
 import ProfilePage from './pages/ProfilePage';
-
-// Protected route component
-const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = localStorage.getItem('user') !== null;
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
-  
-  return children;
-};
 
 const App = () => {
   return (
