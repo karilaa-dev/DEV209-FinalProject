@@ -1,17 +1,24 @@
-/* Dashboard page styles */
-.dashboard-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-}
+/* Dashboard page styles - redesigned to match HomePage */
+/* Using HomePage styling while preserving Dashboard functionality */
 
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Use home page styling for main structure */
+.home-header {
+  text-align: center;
   margin-bottom: 2rem;
 }
 
+.home-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.home-header p {
+  color: #666;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Create playlist button - centered and styled consistently */
 .create-playlist-button {
   display: inline-flex;
   align-items: center;
@@ -22,6 +29,7 @@
   border-radius: 4px;
   font-weight: 500;
   transition: background-color 0.3s;
+  margin-top: 1.5rem;
 }
 
 .create-playlist-button:hover {
@@ -31,6 +39,11 @@
 .no-playlists {
   text-align: center;
   padding: 2rem;
+  margin: 2rem auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
 }
 
 .create-playlist-link {
@@ -40,31 +53,45 @@
   font-weight: 500;
 }
 
-/* User playlists grid */
-.user-playlists-grid {
+/* Most popular header styling from HomePage */
+.most-popular-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2rem 0 1rem;
+}
+
+.most-popular-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Playlist grid styling from HomePage but preserving Dashboard functionality */
+.playlist-grid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   gap: 1.5rem;
 }
 
 @media (min-width: 576px) {
-  .user-playlists-grid {
+  .playlist-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (min-width: 768px) {
-  .user-playlists-grid {
+  .playlist-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (min-width: 992px) {
-  .user-playlists-grid {
+  .playlist-grid {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
+/* Preserve user playlist card styling for actions */
 .user-playlist-card-container {
   position: relative;
   background-color: white;
@@ -91,9 +118,10 @@
   right: 0;
   background-color: rgba(0, 0, 0, 0.6);
   border-bottom-left-radius: 8px;
+  z-index: 10;
 }
 
-.edit-playlist-button, .delete-playlist-button {
+.edit-playlist-button, .delete-playlist-button, .share-playlist-button {
   background-color: white;
   color: #333;
   border: none;
@@ -107,11 +135,30 @@
   transition: background-color 0.3s, transform 0.3s;
 }
 
-.edit-playlist-button:hover, .delete-playlist-button:hover {
+.edit-playlist-button:hover, .delete-playlist-button:hover, .share-playlist-button:hover {
   background-color: #f5f5f5;
   transform: scale(1.1);
 }
 
 .delete-playlist-button {
+  color: #e74c3c;
+}
+
+.share-playlist-button {
+  color: #3498db;
+}
+
+/* Loading and error states */
+.loading, .error-message {
+  text-align: center;
+  padding: 2rem;
+  margin: 2rem auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+}
+
+.error-message {
   color: #e74c3c;
 }
