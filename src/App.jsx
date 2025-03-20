@@ -4,6 +4,7 @@ import './styles/index.css';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import DashboardPage from './pages/DashboardPage';
 import CreatePlaylistPage from './pages/CreatePlaylistPage';
 import EditPlaylistPage from './pages/EditPlaylistPage';
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/create-playlist" element={<CreatePlaylistPage />} />
         <Route path="/edit-playlist/:playlistId" element={<EditPlaylistPage />} />
