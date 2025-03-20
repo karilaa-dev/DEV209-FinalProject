@@ -4,6 +4,31 @@
   min-height: 100vh;
 }
 
+.back-link-container {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0; /* Adjusted margin for consistent spacing */
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #0066cc;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  background-color: #0052a3;
+  /* Removed color change */
+}
+
 .playlist-detail-content {
   max-width: 900px;
   margin: 0 auto;
@@ -36,21 +61,26 @@
   margin-right: auto;
 }
 
-.playlist-title-container .favorite-icon {
-  font-size: 1.5rem;
-  cursor: pointer;
-  margin-top: 0;
-  margin-left: 0;
-  margin-right: 0;
-}
-
 .playlist-description {
   color: #666;
   margin-bottom: 1rem;
   line-height: 1.5;
 }
 
-.playlist-creator, .playlist-video-count {
+.playlist-creator {
+  color: #777;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.playlist-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.playlist-video-count,
+.playlist-view-count {
   color: #777;
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
@@ -78,21 +108,6 @@
   display: flex;
   align-items: center;
   margin-top: 1rem;
-}
-
-.favorite-checked {
-  color: #ffc107;
-}
-
-.favorite-unchecked {
-  color: #ccc;
-}
-
-.playlist-view-count {
-  color: #777;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-  font-weight: 500;
 }
 
 .playlist-videos {
