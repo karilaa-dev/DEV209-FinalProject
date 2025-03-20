@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { getCurrentUserData } from "../services/auth";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getPlaylist, removeVideoFromPlaylist, updateVideoInPlaylist } from "../services/playlist";
+import { getPlaylist, removeVideoFromPlaylist, updateVideoInPlaylist, updateViewCount, updatePlaylistsWithoutViewCount } from "../services/playlist";
 import Navbar from "../components/Navbar";
 import VideoItem from "../components/VideoItem";
 import VideoPlayerPopup from "../components/VideoPlayerPopup";
 import { FaEdit, FaArrowLeft, FaStar } from "react-icons/fa";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../services/firebase"; // Correct import path
+import "../styles/pages/PlaylistDetailPage.css"; // Import the CSS file
 
 const PlaylistDetailPage = () => {
     const { playlistId } = useParams();
@@ -26,7 +27,23 @@ const PlaylistDetailPage = () => {
     // Check if the current user is the owner of this playlist
     const isOwner = currentUser && playlist?.userId === currentUser.uid;
 
-    // Fetch playlist data
+    // Update playlists without viewCount field
+    useEffect(() => {
+        const updateMissingViewCounts = async () => {
+            try {
+                const result = await updatePlaylistsWithoutViewCount();
+                if (result.updatedCount > 0) {
+                    console.log(`Updated ${result.updatedCount} playlists with missing view counts`);
+                }
+            } catch (err) {
+                console.error("Error updating playlists without view count:", err);
+            }
+        };
+        
+        updateMissingViewCounts();
+    }, []);
+
+    // Fetch playlist data and update view count
     useEffect(() => {
         const fetchPlaylist = async () => {
             if (!playlistId) return;
@@ -38,6 +55,16 @@ const PlaylistDetailPage = () => {
                 if (error) {
                     throw new Error(error);
                 }
+
+                // Update view count
+                await updateViewCount(playlistId);
+                
+                // If viewCount is undefined, set it to 0
+                if (playlist.viewCount === undefined) {
+                    playlist.viewCount = 0;
+                }
+                // We don't manually increment the view count here anymore
+                // as it's already incremented in the updateViewCount function
 
                 setPlaylist(playlist);
                 setIsFavorite(playlist.isFavorite || false);
@@ -192,7 +219,12 @@ const PlaylistDetailPage = () => {
                     </Link>
 
                     <div className="playlist-header-content">
-                        <h1 className="playlist-title">{playlist.name}</h1>
+                        <div className="playlist-title-container">
+                            <div className="favorite-icon" onClick={handleFavoriteToggle}>
+                                <FaStar className={isFavorite ? "favorite-checked" : "favorite-unchecked"} />
+                            </div>
+                            <h1 className="playlist-title">{playlist.name}</h1>
+                        </div>
                         {playlist.description && (
                             <p className="playlist-description">{playlist.description}</p>
                         )}
@@ -203,14 +235,16 @@ const PlaylistDetailPage = () => {
                             {playlist.videos ? playlist.videos.length : 0} videos
                         </p>
 
-                        {isOwner && (
-                            <Link to={`/edit-playlist/${playlistId}`} className="edit-button">
-                                <FaEdit /> Edit Playlist
-                            </Link>
-                        )}
-                        <div className="favorite-icon" onClick={handleFavoriteToggle}>
-                            <FaStar className={isFavorite ? "favorite-checked" : "favorite-unchecked"} />
+                        <div className="playlist-actions">
+                            {isOwner && (
+                                <Link to={`/edit-playlist/${playlistId}`} className="edit-button">
+                                    <FaEdit /> Edit Playlist
+                                </Link>
+                            )}
                         </div>
+                        <p className="playlist-view-count">
+                            {playlist.viewCount || 0} views
+                        </p>
                     </div>
                 </div>
 

@@ -11,7 +11,8 @@ import {
   orderBy, 
   limit, 
   startAfter, 
-  serverTimestamp 
+  serverTimestamp,
+  increment
 } from "firebase/firestore";
 import { db } from "./firebase";
 
@@ -297,10 +298,51 @@ export const updateVideoInPlaylist = async (playlistId, videoIndex, updatedVideo
 export const updateViewCount = async (playlistId) => {
   try {
     const playlistDocRef = doc(db, "playlists", playlistId);
+    const playlistDoc = await getDoc(playlistDocRef);
+    
+    if (!playlistDoc.exists()) {
+      return { error: "Playlist not found" };
+    }
+    
+    const currentViewCount = playlistDoc.data().viewCount || 0;
+    
     await updateDoc(playlistDocRef, {
-      viewCount: increment(1)
+      viewCount: currentViewCount + 1
     });
+    
+    return { success: true };
   } catch (error) {
     console.error("Error updating view count: ", error);
+    return { error };
+  }
+};
+
+// Update playlists without viewCount field
+export const updatePlaylistsWithoutViewCount = async () => {
+  try {
+    // Get all playlists
+    const querySnapshot = await getDocs(collection(db, "playlists"));
+    
+    // Update playlists without viewCount
+    const updatePromises = [];
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.viewCount === undefined) {
+        updatePromises.push(
+          updateDoc(doc.ref, { viewCount: 0 })
+        );
+      }
+    });
+    
+    // Wait for all updates to complete
+    await Promise.all(updatePromises);
+    
+    return { 
+      success: true, 
+      updatedCount: updatePromises.length 
+    };
+  } catch (error) {
+    console.error("Error updating playlists without view count: ", error);
+    return { error };
   }
 };
