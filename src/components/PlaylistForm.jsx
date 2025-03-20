@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { createPlaylist, updatePlaylist, addVideoToPlaylist } from "../services/playlist";
-import { extractVideoId } from "../services/youtube";
+import { createPlaylist, updatePlaylist } from "../services/playlist";
 import { FaPlus, FaTimes, FaLink, FaSearch, FaArrowUp, FaArrowDown } from "react-icons/fa";
 import YouTubeSearch from "./YouTubeSearch";
+import useVideoManagement from "../hooks/useVideoManagement";
 
 const PlaylistForm = ({ existingPlaylist = null }) => {
   const { currentUser, userData } = useAuth();
@@ -18,10 +18,21 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
   });
 
   const [activeTab, setActiveTab] = useState("url"); // 'url' or 'search'
-  const [videoUrl, setVideoUrl] = useState("");
-  const [videoTitle, setVideoTitle] = useState("");
-  const [videoDescription, setVideoDescription] = useState("");
-  const [videos, setVideos] = useState(existingPlaylist?.videos || []);
+  const {
+    videos,
+    setVideos,
+    videoUrl,
+    setVideoUrl,
+    videoTitle,
+    setVideoTitle,
+    videoDescription,
+    setVideoDescription,
+    addVideo,
+    selectVideo,
+    removeVideo,
+    moveVideoUp,
+    moveVideoDown,
+  } = useVideoManagement(existingPlaylist?.videos || []);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -38,103 +49,46 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
     if (!formData.name.trim()) {
       newErrors.name = "Playlist name is required";
     }
-    
+
     if (videos.length === 0) {
       newErrors.videos = "Add at least one video to your playlist";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleAddVideo = (e) => {
     e.preventDefault();
-    
-    if (!videoUrl.trim()) {
-      setErrors({ ...errors, videoUrl: "Video URL is required" });
-      return;
-    }
-    
-    // Simple validation for YouTube URL
-    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
-    if (!youtubeRegex.test(videoUrl)) {
+
+    if (!addVideo()) {
       setErrors({ ...errors, videoUrl: "Please enter a valid YouTube URL" });
       return;
     }
-    
-    // Extract thumbnail from YouTube URL
-    const videoId = extractVideoId(videoUrl);
-    const thumbnailUrl = videoId 
-      ? `https://img.youtube.com/vi/${videoId}/0.jpg` 
-      : null;
-    
-    const newVideo = {
-      url: videoUrl,
-      title: videoTitle.trim() || "Untitled Video",
-      description: videoDescription.trim(),
-      thumbnailUrl,
-      addedAt: new Date().toISOString(),
-    };
-    
-    setVideos([...videos, newVideo]);
-    setVideoUrl("");
-    setVideoTitle("");
-    setVideoDescription("");
+
     setErrors({ ...errors, videoUrl: null, videos: null });
   };
 
   // Handle video from YouTube search
   const handleSelectVideo = (video) => {
-    const newVideo = {
-      url: video.url,
-      title: video.title,
-      description: video.description,
-      thumbnailUrl: video.thumbnailUrl,
-      addedAt: new Date().toISOString(),
-    };
-    
-    setVideos([...videos, newVideo]);
+    selectVideo(video);
     setActiveTab("url"); // Switch back to URL tab after adding
     setErrors({ ...errors, videos: null });
   };
 
   const handleRemoveVideo = (index) => {
-    const updatedVideos = [...videos];
-    updatedVideos.splice(index, 1);
-    setVideos(updatedVideos);
-  };
-  
-  const moveVideoUp = (index) => {
-    if (index === 0) return; // Already at the top
-    
-    const updatedVideos = [...videos];
-    const temp = updatedVideos[index];
-    updatedVideos[index] = updatedVideos[index - 1];
-    updatedVideos[index - 1] = temp;
-    
-    setVideos(updatedVideos);
-  };
-  
-  const moveVideoDown = (index) => {
-    if (index === videos.length - 1) return; // Already at the bottom
-    
-    const updatedVideos = [...videos];
-    const temp = updatedVideos[index];
-    updatedVideos[index] = updatedVideos[index + 1];
-    updatedVideos[index + 1] = temp;
-    
-    setVideos(updatedVideos);
+    removeVideo(index);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       if (isEditing) {
         // Update existing playlist
@@ -143,11 +97,11 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
           videos,
           updatedAt: new Date().toISOString(),
         });
-        
+
         if (error) {
           throw new Error(error);
         }
-        
+
         navigate(`/playlist/${existingPlaylist.id}`);
       } else {
         // Create new playlist
@@ -161,11 +115,11 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
           },
           currentUser.uid
         );
-        
+
         if (result.error) {
           throw new Error(result.error);
         }
-        
+
         navigate(`/playlist/${result.id}`);
       }
     } catch (error) {
@@ -178,7 +132,7 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
   return (
     <div className="playlist-form-container">
       <h2>{isEditing ? "Edit Playlist" : "Create New Playlist"}</h2>
-      
+
       <form onSubmit={handleSubmit} className="playlist-form">
         <div className="form-group">
           <label htmlFor="name">Playlist Name *</label>
@@ -192,7 +146,7 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
           />
           {errors.name && <div className="error-message">{errors.name}</div>}
         </div>
-        
+
         <div className="form-group">
           <label htmlFor="description">Description</label>
           <textarea
@@ -203,7 +157,7 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
             rows="3"
           />
         </div>
-        
+
         <div className="form-group checkbox-group">
           <label htmlFor="isHidden" className="checkbox-label">
             <input
@@ -221,11 +175,11 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
             </p>
           )}
         </div>
-        
+
         <div className="videos-section">
           <h3>Videos</h3>
           {errors.videos && <div className="error-message">{errors.videos}</div>}
-          
+
           <div className="video-list">
             {videos.map((video, index) => (
               <div key={index} className="video-list-item">
@@ -270,10 +224,10 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
               </div>
             ))}
           </div>
-          
+
           <div className="add-video-form">
             <h4>Add Video</h4>
-            
+
             <div className="add-video-tabs">
               <button
                 type="button"
@@ -290,7 +244,7 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
                 <FaSearch /> Search YouTube
               </button>
             </div>
-            
+
             {activeTab === "url" ? (
               <>
                 <div className="form-group">
@@ -307,7 +261,7 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
                     <div className="error-message">{errors.videoUrl}</div>
                   )}
                 </div>
-                
+
                 <div className="form-group">
                   <label htmlFor="videoTitle">Video Title</label>
                   <input
@@ -318,7 +272,7 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
                     placeholder="Optional title for the video"
                   />
                 </div>
-                
+
                 <div className="form-group">
                   <label htmlFor="videoDescription">Video Description</label>
                   <textarea
@@ -329,7 +283,7 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
                     placeholder="Optional description"
                   />
                 </div>
-                
+
                 <button
                   type="button"
                   className="add-video-button"
@@ -343,11 +297,11 @@ const PlaylistForm = ({ existingPlaylist = null }) => {
             )}
           </div>
         </div>
-        
+
         {errors.submit && (
           <div className="error-message submit-error">{errors.submit}</div>
         )}
-        
+
         <div className="form-actions">
           <button
             type="button"

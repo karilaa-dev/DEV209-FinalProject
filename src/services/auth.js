@@ -5,7 +5,8 @@ import {
   onAuthStateChanged,
   updatePassword,
   EmailAuthProvider,
-  reauthenticateWithCredential
+  reauthenticateWithCredential,
+  sendPasswordResetEmail
 } from "firebase/auth";
 import { auth, db } from "./firebase";
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
@@ -112,6 +113,16 @@ export const updateUserPassword = async (currentPassword, newPassword) => {
     // Then update password
     await updatePassword(user, newPassword);
     
+    return { success: true };
+  } catch (error) {
+    return { error };
+  }
+};
+
+// Send password reset email
+export const resetPassword = async (email) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
     return { success: true };
   } catch (error) {
     return { error };

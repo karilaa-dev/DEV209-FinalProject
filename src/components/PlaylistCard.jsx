@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaEyeSlash, FaStar } from "react-icons/fa";
 import { getCurrentUserData } from "../services/auth";
-import { doc, updateDoc, setDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc, setDoc, getDoc, increment } from "firebase/firestore";
 import { db } from "../services/firebase"; // Correct import path
 import { useAuth } from "../context/AuthContext"; // Import useAuth to get current user
 
@@ -60,15 +60,8 @@ const PlaylistCard = ({ playlist, showHiddenIndicator = false }) => {
         }
     };
 
-    const handleViewCountIncrement = async () => {
-        try {
-            const playlistDocRef = doc(db, "playlists", playlist.id);
-            await updateDoc(playlistDocRef, { viewCount: increment(1) });
-            setViewCount(viewCount + 1); // Update local state
-        } catch (error) {
-            console.error("Error updating view count: ", error);
-        }
-    };
+    // We'll remove this function as view counting should only happen in PlaylistDetailPage
+    // to avoid double counting
 
     // Default thumbnail if none is provided
     const defaultThumbnail = "https://via.placeholder.com/300x300?text=Playlist";
@@ -81,7 +74,7 @@ const PlaylistCard = ({ playlist, showHiddenIndicator = false }) => {
 
     return (
         <div className="playlist-card">
-            <Link to={`/playlist/${playlist.id}`} className="playlist-card-link" onClick={handleViewCountIncrement}>
+            <Link to={`/playlist/${playlist.id}`} className="playlist-card-link">
                 <div className="playlist-card-thumbnail">
                     <img src={thumbnailUrl} alt={playlist.name} />
                     <div className="playlist-card-count">

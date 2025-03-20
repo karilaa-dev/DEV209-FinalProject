@@ -11,7 +11,8 @@ import {
   orderBy, 
   limit, 
   startAfter, 
-  serverTimestamp 
+  serverTimestamp,
+  increment
 } from "firebase/firestore";
 import { db } from "./firebase";
 
@@ -110,6 +111,8 @@ export const getUserPlaylists = async (userId) => {
 // Get all playlists with pagination
 export const getAllPlaylists = async (lastVisible = null, itemsPerPage = 8) => {
   try {
+    console.log(`getAllPlaylists called with lastVisible: ${lastVisible ? 'exists' : 'null'}, itemsPerPage: ${itemsPerPage}`);
+    
     let q;
     
     if (lastVisible) {
@@ -140,39 +143,72 @@ export const getAllPlaylists = async (lastVisible = null, itemsPerPage = 8) => {
     
     const lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
     
+    console.log(`Fetched ${playlists.length} playlists, lastDoc: ${lastDoc ? 'exists' : 'null'}`);
+    
     return { 
       playlists,
       lastVisible: lastDoc
     };
   } catch (error) {
+    console.error("Error in getAllPlaylists:", error);
+    
     // Add fallback logic for index errors
     if (error.code === 'failed-precondition') {
-      // Handle the index building error by fetching without ordering
-      const simpleQuery = query(
-        collection(db, "playlists"),
-        where("isHidden", "!=", true),
-        limit(itemsPerPage)
-      );
+      console.log("Index building error detected, using fallback query");
       
-      const querySnapshot = await getDocs(simpleQuery);
-      const playlists = [];
-      
-      querySnapshot.forEach((doc) => {
-        playlists.push({ id: doc.id, ...doc.data() });
-      });
-      
-      // Sort in memory
-      playlists.sort((a, b) => {
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      });
-      
-      return { 
-        playlists: playlists.slice(0, itemsPerPage),
-        lastVisible: null, // Disable pagination temporarily
-        indexBuilding: true
-      };
+      try {
+        // Handle the index building error by fetching without ordering
+        const simpleQuery = query(
+          collection(db, "playlists"),
+          where("isHidden", "!=", true),
+          limit(itemsPerPage * 2) // Fetch more to ensure we have enough for pagination
+        );
+        
+        const querySnapshot = await getDocs(simpleQuery);
+        let allPlaylists = [];
+        
+        querySnapshot.forEach((doc) => {
+          allPlaylists.push({ id: doc.id, ...doc.data() });
+        });
+        
+        // Sort in memory
+        allPlaylists.sort((a, b) => {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+        
+        console.log(`Fallback query fetched ${allPlaylists.length} playlists`);
+        
+        // If lastVisible is provided, we need to find where to start
+        if (lastVisible && lastVisible.id) {
+          const lastVisibleIndex = allPlaylists.findIndex(p => p.id === lastVisible.id);
+          if (lastVisibleIndex !== -1) {
+            allPlaylists = allPlaylists.slice(lastVisibleIndex + 1);
+            console.log(`Sliced from index ${lastVisibleIndex + 1}, ${allPlaylists.length} playlists remaining`);
+          }
+        }
+        
+        // Get the current page and the next lastVisible
+        const currentPage = allPlaylists.slice(0, itemsPerPage);
+        const nextLastVisible = allPlaylists.length > itemsPerPage ? 
+          { id: currentPage[currentPage.length - 1].id } : null;
+        
+        console.log(`Returning ${currentPage.length} playlists, nextLastVisible: ${nextLastVisible ? 'exists' : 'null'}`);
+        
+        return { 
+          playlists: currentPage,
+          lastVisible: nextLastVisible,
+          indexBuilding: true
+        };
+      } catch (fallbackError) {
+        console.error("Error in fallback query:", fallbackError);
+        return { 
+          error: "Failed to load playlists. Please try again later.",
+          originalError: error
+        };
+      }
     }
-    return { error };
+    
+    return { error: "Failed to load playlists", originalError: error };
   }
 };
 
@@ -186,13 +222,19 @@ export const searchPlaylists = async (searchTerm) => {
       query(collection(db, "playlists"), where("isHidden", "!=", true))
     );
     const playlists = [];
+    const searchTermLower = searchTerm.toLowerCase();
     
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      if (
-        data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (data.description && data.description.toLowerCase().includes(searchTerm.toLowerCase()))
-      ) {
+      
+      // Check if playlist name or description matches
+      const playlistMatches = 
+        data.name.toLowerCase().includes(searchTermLower) ||
+        (data.description && data.description.toLowerCase().includes(searchTermLower));
+      
+      // Only include playlists that match by name or description
+      // No longer searching in videos
+      if (playlistMatches) {
         playlists.push({ id: doc.id, ...data });
       }
     });
@@ -297,10 +339,21 @@ export const updateVideoInPlaylist = async (playlistId, videoIndex, updatedVideo
 export const updateViewCount = async (playlistId) => {
   try {
     const playlistDocRef = doc(db, "playlists", playlistId);
+    const playlistDoc = await getDoc(playlistDocRef);
+    
+    if (!playlistDoc.exists()) {
+      return { error: "Playlist not found" };
+    }
+    
+    const currentViewCount = playlistDoc.data().viewCount || 0;
+    
     await updateDoc(playlistDocRef, {
-      viewCount: increment(1)
+      viewCount: currentViewCount + 1
     });
+    
+    return { success: true };
   } catch (error) {
     console.error("Error updating view count: ", error);
+    return { error };
   }
 };
