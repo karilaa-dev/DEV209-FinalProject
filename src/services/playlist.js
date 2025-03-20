@@ -222,13 +222,19 @@ export const searchPlaylists = async (searchTerm) => {
       query(collection(db, "playlists"), where("isHidden", "!=", true))
     );
     const playlists = [];
+    const searchTermLower = searchTerm.toLowerCase();
     
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      if (
-        data.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (data.description && data.description.toLowerCase().includes(searchTerm.toLowerCase()))
-      ) {
+      
+      // Check if playlist name or description matches
+      const playlistMatches = 
+        data.name.toLowerCase().includes(searchTermLower) ||
+        (data.description && data.description.toLowerCase().includes(searchTermLower));
+      
+      // Only include playlists that match by name or description
+      // No longer searching in videos
+      if (playlistMatches) {
         playlists.push({ id: doc.id, ...data });
       }
     });
