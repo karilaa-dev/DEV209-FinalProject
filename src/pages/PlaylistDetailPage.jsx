@@ -6,7 +6,7 @@ import { getPlaylist, removeVideoFromPlaylist, updateVideoInPlaylist, updateView
 import Navbar from "../components/Navbar";
 import VideoItem from "../components/VideoItem";
 import VideoPlayerPopup from "../components/VideoPlayerPopup";
-import { FaEdit, FaArrowLeft, FaStar } from "react-icons/fa";
+import { FaEdit, FaArrowLeft } from "react-icons/fa";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../services/firebase"; // Correct import path
 import "../styles/pages/PlaylistDetailPage.css"; // Import the CSS file
@@ -22,7 +22,6 @@ const PlaylistDetailPage = () => {
     const [creatorName, setCreatorName] = useState("");
     const [selectedVideo, setSelectedVideo] = useState(null);
     const [selectedVideoIndex, setSelectedVideoIndex] = useState(null);
-    const [isFavorite, setIsFavorite] = useState(false);
 
     // Check if the current user is the owner of this playlist
     const isOwner = currentUser && playlist?.userId === currentUser.uid;
@@ -51,7 +50,6 @@ const PlaylistDetailPage = () => {
                 // as it's already incremented in the updateViewCount function
 
                 setPlaylist(playlist);
-                setIsFavorite(playlist.isFavorite || false);
 
                 // Set initial creator name from playlist data
                 setCreatorName(playlist.creatorName || "Anonymous");
@@ -76,19 +74,6 @@ const PlaylistDetailPage = () => {
 
         fetchPlaylist();
     }, [playlistId]);
-
-    // Handle toggling favorite status
-    const handleFavoriteToggle = async () => {
-        const newFavoriteStatus = !isFavorite;
-        setIsFavorite(newFavoriteStatus);
-
-        try {
-            const playlistDocRef = doc(db, "playlists", playlistId);
-            await updateDoc(playlistDocRef, { isFavorite: newFavoriteStatus });
-        } catch (error) {
-            console.error("Error updating favorite status: ", error);
-        }
-    };
 
     // Handle video editing
     const handleEditVideo = async (index, updatedVideoData) => {
@@ -204,9 +189,6 @@ const PlaylistDetailPage = () => {
 
                     <div className="playlist-header-content">
                         <div className="playlist-title-container">
-                            <div className="favorite-icon" onClick={handleFavoriteToggle}>
-                                <FaStar className={isFavorite ? "favorite-checked" : "favorite-unchecked"} />
-                            </div>
                             <h1 className="playlist-title">{playlist.name}</h1>
                             {isOwner && (
                                 <Link to={`/edit-playlist/${playlistId}`} className="edit-button">
