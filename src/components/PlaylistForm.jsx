@@ -6,68 +6,74 @@ import { FaPlus, FaTimes, FaLink, FaSearch, FaArrowUp, FaArrowDown } from "react
 import YouTubeSearch from "./YouTubeSearch";
 import useVideoManagement from "../hooks/useVideoManagement";
 
+// Component for creating or editing a playlist
 const PlaylistForm = ({ existingPlaylist = null }) => {
-  const { currentUser, userData } = useAuth();
-  const navigate = useNavigate();
-  const isEditing = !!existingPlaylist;
+    const { currentUser, userData } = useAuth(); // Get current user and user data
+    const navigate = useNavigate(); // Hook for navigation
+    const isEditing = !!existingPlaylist; // Determine if the form is in edit mode
 
-  const [formData, setFormData] = useState({
-    name: existingPlaylist?.name || "",
-    description: existingPlaylist?.description || "",
-    isHidden: existingPlaylist?.isHidden || false,
-  });
-
-  const [activeTab, setActiveTab] = useState("url"); // 'url' or 'search'
-  const {
-    videos,
-    setVideos,
-    videoUrl,
-    setVideoUrl,
-    videoTitle,
-    setVideoTitle,
-    videoDescription,
-    setVideoDescription,
-    addVideo,
-    selectVideo,
-    removeVideo,
-    moveVideoUp,
-    moveVideoDown,
-  } = useVideoManagement(existingPlaylist?.videos || []);
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value,
+    // State for form data
+    const [formData, setFormData] = useState({
+        name: existingPlaylist?.name || "",
+        description: existingPlaylist?.description || "",
+        isHidden: existingPlaylist?.isHidden || false,
     });
-  };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.name.trim()) {
-      newErrors.name = "Playlist name is required";
-    }
+    const [activeTab, setActiveTab] = useState("url"); // State for active tab ('url' or 'search')
+    const {
+        videos,
+        setVideos,
+        videoUrl,
+        setVideoUrl,
+        videoTitle,
+        setVideoTitle,
+        videoDescription,
+        setVideoDescription,
+        addVideo,
+        selectVideo,
+        removeVideo,
+        moveVideoUp,
+        moveVideoDown,
+    } = useVideoManagement(existingPlaylist?.videos || []); // Custom hook for video management
+    const [errors, setErrors] = useState({}); // State for form errors
+    const [isSubmitting, setIsSubmitting] = useState(false); // State for submission status
 
-    if (videos.length === 0) {
-      newErrors.videos = "Add at least one video to your playlist";
-    }
+    // Handle form input changes
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData({
+            ...formData,
+            [name]: type === 'checkbox' ? checked : value,
+        });
+    };
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    // Validate the form inputs
+    const validateForm = () => {
+        const newErrors = {};
+        if (!formData.name.trim()) {
+            newErrors.name = "Playlist name is required";
+        }
 
-  const handleAddVideo = (e) => {
-    e.preventDefault();
+        if (videos.length === 0) {
+            newErrors.videos = "Add at least one video to your playlist";
+        }
 
-    if (!addVideo()) {
-      setErrors({ ...errors, videoUrl: "Please enter a valid YouTube URL" });
-      return;
-    }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
-    setErrors({ ...errors, videoUrl: null, videos: null });
-  };
+    // Handle adding a video to the playlist
+    const handleAddVideo = (e) => {
+        e.preventDefault();
+
+        if (!addVideo()) {
+            setErrors({ ...errors, videoUrl: "Please enter a valid YouTube URL" });
+            return;
+        }
+
+        setErrors({ ...errors, videoUrl: null, videos: null });
+    };
+
 
   // Handle video from YouTube search
   const handleSelectVideo = (video) => {

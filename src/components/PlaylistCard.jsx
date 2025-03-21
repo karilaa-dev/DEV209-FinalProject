@@ -7,12 +7,14 @@ import { db } from "../services/firebase"; // Correct import path
 import { useAuth } from "../context/AuthContext"; // Import useAuth to get current user
 import PropTypes from 'prop-types';
 
+// Component for displaying a playlist card with details and actions
 const PlaylistCard = ({ playlist, showHiddenIndicator = false }) => {
     const { currentUser } = useAuth(); // Get current user
     const [creatorName, setCreatorName] = useState(playlist.creatorName || "Anonymous");
     const [viewCount, setViewCount] = useState(playlist.viewCount || 0);
     const [isFavorite, setIsFavorite] = useState(false);
 
+    // Fetch the creator's name based on userId
     useEffect(() => {
         const fetchCreatorName = async () => {
             if (playlist.userId) {
@@ -30,6 +32,7 @@ const PlaylistCard = ({ playlist, showHiddenIndicator = false }) => {
         fetchCreatorName();
     }, [playlist.userId]);
 
+    // Fetch the favorite status of the playlist for the current user
     useEffect(() => {
         const fetchFavoriteStatus = async () => {
             if (currentUser) {
@@ -48,6 +51,7 @@ const PlaylistCard = ({ playlist, showHiddenIndicator = false }) => {
         fetchFavoriteStatus();
     }, [currentUser, playlist.id]);
 
+    // Handle toggling the favorite status of the playlist
     const handleFavoriteToggle = async (e) => {
         e.preventDefault(); // Prevent the link from being followed
         const newFavoriteStatus = !isFavorite;
@@ -60,9 +64,6 @@ const PlaylistCard = ({ playlist, showHiddenIndicator = false }) => {
             console.error("Error updating favorite status: ", error);
         }
     };
-
-    // We'll remove this function as view counting should only happen in PlaylistDetailPage
-    // to avoid double counting
 
     // Default thumbnail if none is provided
     const defaultThumbnail = "https://via.placeholder.com/300x300?text=Playlist";
@@ -113,18 +114,19 @@ const PlaylistCard = ({ playlist, showHiddenIndicator = false }) => {
     );
 };
 
+// Prop types for the PlaylistCard component
 PlaylistCard.propTypes = {
-  playlist: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    description: PropTypes.string,
-    userId: PropTypes.string,
-    isHidden: PropTypes.bool,
-    videos: PropTypes.arrayOf(PropTypes.object),
-    viewCount: PropTypes.number,
-    creatorName: PropTypes.string
-  }).isRequired,
-  showHiddenIndicator: PropTypes.bool
+    playlist: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        description: PropTypes.string,
+        userId: PropTypes.string,
+        isHidden: PropTypes.bool,
+        videos: PropTypes.arrayOf(PropTypes.object),
+        viewCount: PropTypes.number,
+        creatorName: PropTypes.string
+    }).isRequired,
+    showHiddenIndicator: PropTypes.bool
 };
 
 export default PlaylistCard;

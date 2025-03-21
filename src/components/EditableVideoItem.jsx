@@ -5,90 +5,92 @@ import { extractVideoId } from "../services/youtube";
 import VideoThumbnail from "./VideoThumbnail";
 import ReorderControls from "./ReorderControls";
 
+// Component for displaying and editing a video item in a playlist
 const EditableVideoItem = ({
-  video,
-  index,
-  playlistId,
-  onRemove,
-  onEdit,
-  onMoveUp,
-  onMoveDown,
-  isFirst,
-  isLast,
-  autoOpenEditModal,
-  onModalClosed
+    video,
+    index,
+    playlistId,
+    onRemove,
+    onEdit,
+    onMoveUp,
+    onMoveDown,
+    isFirst,
+    isLast,
+    autoOpenEditModal,
+    onModalClosed
 }) => {
-  const [showEditModal, setShowEditModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
 
-  // Auto-open edit modal when autoOpenEditModal is true
-  useEffect(() => {
-    if (autoOpenEditModal) {
-      setShowEditModal(true);
-    }
-  }, [autoOpenEditModal]);
+    // Auto-open edit modal when autoOpenEditModal is true
+    useEffect(() => {
+        if (autoOpenEditModal) {
+            setShowEditModal(true);
+        }
+    }, [autoOpenEditModal]);
 
-  const handleRemove = () => {
-    if (onRemove) {
-      onRemove(index);
-    }
-  };
+    // Function to handle the removal of the video
+    const handleRemove = () => {
+        if (onRemove) {
+            onRemove(index);
+        }
+    };
 
-  return (
-    <div className="editable-video-item">
-      <VideoThumbnail video={video} />
-      <div className="video-details">
-        <h3 className="video-title">{video.title || "Untitled Video"}</h3>
-        {video.description && (
-          <p className="video-description">{video.description}</p>
-        )}
-        <a
-          href={video.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="video-link"
-        >
-          Watch <FaExternalLinkAlt />
-        </a>
-      </div>
-      <div className="video-actions">
-        <ReorderControls
-          onMoveUp={() => onMoveUp(index)}
-          onMoveDown={() => onMoveDown(index)}
-          disabledUp={isFirst}
-          disabledDown={isLast}
-        />
-        <div className="edit-actions">
-          <button className="edit-video-button" onClick={() => setShowEditModal(true)} title="Edit video">
-            <FaEdit />
-          </button>
-          <button className="remove-video-button" onClick={handleRemove} title="Remove video">
-            <FaTrash />
-          </button>
+    return (
+        <div className="editable-video-item">
+            <VideoThumbnail video={video} />
+            <div className="video-details">
+                <h3 className="video-title">{video.title || "Untitled Video"}</h3>
+                {video.description && (
+                    <p className="video-description">{video.description}</p>
+                )}
+                <a
+                    href={video.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="video-link"
+                >
+                    Watch <FaExternalLinkAlt />
+                </a>
+            </div>
+            <div className="video-actions">
+                <ReorderControls
+                    onMoveUp={() => onMoveUp(index)}
+                    onMoveDown={() => onMoveDown(index)}
+                    disabledUp={isFirst}
+                    disabledDown={isLast}
+                />
+                <div className="edit-actions">
+                    <button className="edit-video-button" onClick={() => setShowEditModal(true)} title="Edit video">
+                        <FaEdit />
+                    </button>
+                    <button className="remove-video-button" onClick={handleRemove} title="Remove video">
+                        <FaTrash />
+                    </button>
+                </div>
+            </div>
+
+            {showEditModal && (
+                <VideoEditModal
+                    video={video}
+                    onSave={(updatedVideoData) => {
+                        if (onEdit) {
+                            onEdit(index, updatedVideoData);
+                        }
+                        setShowEditModal(false);
+                        if (onModalClosed) {
+                            onModalClosed();
+                        }
+                    }}
+                    onCancel={() => {
+                        setShowEditModal(false);
+                        if (onModalClosed) {
+                            onModalClosed();
+                        }
+                    }}
+                />
+            )}
         </div>
-      </div>
-
-      {showEditModal && (
-        <VideoEditModal
-          video={video}
-          onSave={(updatedVideoData) => {
-            if (onEdit) {
-              onEdit(index, updatedVideoData);
-            }
-            setShowEditModal(false);
-            if (onModalClosed) {
-              onModalClosed();
-            }
-          }}
-          onCancel={() => {
-            setShowEditModal(false);
-            if (onModalClosed) {
-              onModalClosed();
-            }
-          }}
-        />
-      )}
-    </div>
-  );
+    );
 };
 
 export default EditableVideoItem;
