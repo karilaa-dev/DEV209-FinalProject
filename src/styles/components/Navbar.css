@@ -108,3 +108,119 @@
   text-align: left;
   background: none;
 }
+
+/* Mobile navbar styles */
+.mobile-menu-button {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.mobile-nav {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.mobile-nav.open {
+  display: flex;
+}
+
+.mobile-nav-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.mobile-nav-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.mobile-nav-item {
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.mobile-nav-item:hover {
+  background-color: #0052a3;
+}
+
+.mobile-welcome-text {
+  color: white;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.mobile-logout-button {
+  background-color: #e74c3c;
+}
+
+.mobile-logout-button:hover {
+  background-color: #c0392b;
+}
+
+/* Media queries for responsive navbar */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.8rem 1rem;
+  }
+  
+  .navbar-logo {
+    font-size: 1.2rem;
+  }
+  
+  .welcome-text {
+    display: none;
+  }
+  
+  .navbar-buttons .nav-button {
+    display: none;
+  }
+  
+  .mobile-menu-button {
+    display: block;
+  }
+  
+  /* Keep profile button visible on mobile */
+  .profile-dropdown-container {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar {
+    padding: 0.7rem 0.8rem;
+  }
+  
+  .navbar-logo {
+    font-size: 1.1rem;
+  }
+}

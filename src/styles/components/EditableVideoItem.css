@@ -113,3 +113,69 @@
 .editable-video-item .remove-video-button:hover {
   background-color: #c0392b;
 }
+
+/* Responsive styles for EditableVideoItem */
+@media (max-width: 768px) {
+  .editable-video-item {
+    padding: 0.8rem;
+  }
+  
+  .editable-video-item .video-thumbnail {
+    width: 100px;
+    height: 56px;
+    margin-right: 0.8rem;
+  }
+  
+  .editable-video-item .video-title {
+    font-size: 0.95rem;
+  }
+  
+  .editable-video-item .video-description {
+    font-size: 0.8rem;
+    -webkit-line-clamp: 1; /* Show only 1 line on medium screens */
+  }
+  
+  .editable-video-item .video-link {
+    font-size: 0.8rem;
+  }
+  
+  .editable-video-item .video-actions {
+    gap: 0.5rem;
+    margin-left: 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .editable-video-item {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.7rem;
+  }
+  
+  .editable-video-item .video-thumbnail {
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    margin-right: 0;
+    margin-bottom: 0.8rem;
+  }
+  
+  .editable-video-item .video-details {
+    width: 100%;
+    margin-bottom: 0.8rem;
+  }
+  
+  .editable-video-item .video-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+  }
+  
+  .editable-video-item .move-video-up,
+  .editable-video-item .move-video-down,
+  .editable-video-item .edit-video-button,
+  .editable-video-item .remove-video-button {
+    width: 36px;
+    height: 36px; /* Larger touch targets for mobile */
+  }
+}

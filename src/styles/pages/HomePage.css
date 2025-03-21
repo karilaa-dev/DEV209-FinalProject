@@ -34,3 +34,53 @@
 .error {
   color: #e74c3c;
 }
+
+/* Responsive styles for HomePage */
+@media (max-width: 768px) {
+  .home-content {
+    padding: 1.5rem;
+  }
+  
+  .home-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .home-header h1 {
+    font-size: 2rem;
+  }
+  
+  .home-header p {
+    font-size: 1rem;
+    margin-bottom: 1.2rem;
+  }
+  
+  .loading, .error, .no-playlists {
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+  }
+}
+
+@media (max-width: 576px) {
+  .home-content {
+    padding: 1rem;
+  }
+  
+  .home-header {
+    margin-bottom: 1rem;
+  }
+  
+  .home-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .home-header p {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+  
+  .loading, .error, .no-playlists {
+    padding: 1.2rem;
+    margin: 1.2rem auto;
+    max-width: 100%;
+  }
+}

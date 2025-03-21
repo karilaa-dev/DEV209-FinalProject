@@ -82,6 +82,7 @@
   border: none;
   font-weight: 500;
   transition: background-color 0.3s;
+  min-height: 44px; /* Touch-friendly size */
 }
 
 .add-video-button:hover {
@@ -206,6 +207,7 @@
   border-radius: 4px;
   font-weight: 500;
   cursor: pointer;
+  min-height: 44px; /* Touch-friendly size */
 }
 
 .submit-button {
@@ -217,6 +219,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.3s;
+  min-height: 44px; /* Touch-friendly size */
 }
 
 .submit-button:hover {
@@ -226,4 +229,96 @@
 .submit-button:disabled {
   background-color: #99c2ff;
   cursor: not-allowed;
+}
+
+/* Responsive styles for CreatePlaylistPage */
+@media (max-width: 768px) {
+  .create-playlist-content {
+    padding: 1.5rem;
+  }
+  
+  .create-playlist-header,
+  .create-playlist-videos {
+    padding: 1.5rem;
+  }
+  
+  .create-playlist-videos h2 {
+    margin-bottom: 1.2rem;
+  }
+  
+  .add-video-tab {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .video-list-thumbnail {
+    width: 100px;
+    height: 56px;
+  }
+}
+
+@media (max-width: 576px) {
+  .create-playlist-content {
+    padding: 1rem;
+  }
+  
+  .create-playlist-header,
+  .create-playlist-videos {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .add-video-tabs {
+    flex-wrap: wrap;
+  }
+  
+  .add-video-tab {
+    flex: 1;
+    justify-content: center;
+    padding: 0.5rem;
+    min-width: 50%;
+  }
+  
+  .video-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.8rem;
+  }
+  
+  .video-list-thumbnail {
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    margin-right: 0;
+    margin-bottom: 0.8rem;
+  }
+  
+  .video-list-details {
+    width: 100%;
+    margin-bottom: 0.8rem;
+  }
+  
+  .video-reorder-controls {
+    flex-direction: row;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 0.8rem;
+  }
+  
+  .cancel-button,
+  .submit-button {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    min-height: 48px; /* Even larger touch target */
+  }
+  
+  .no-videos {
+    padding: 1.5rem 1rem;
+  }
 }

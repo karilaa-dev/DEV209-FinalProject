@@ -26,3 +26,50 @@ a {
 button {
   cursor: pointer;
 }
+
+/* Global responsive styles */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.8rem !important;
+  }
+  
+  h2 {
+    font-size: 1.5rem !important;
+  }
+  
+  h3 {
+    font-size: 1.2rem !important;
+  }
+  
+  p {
+    font-size: 0.95rem !important;
+  }
+  
+  /* Adjust container padding for mobile */
+  .home-content, 
+  .playlist-detail-content,
+  .dashboard-content,
+  .profile-content,
+  .login-content,
+  .signup-content,
+  .create-playlist-content,
+  .edit-playlist-content {
+    padding: 1rem !important;
+  }
+}
+
+/* Touch-friendly button sizes */
+@media (max-width: 576px) {
+  button, 
+  .nav-button, 
+  .edit-button,
+  .create-playlist-button {
+    padding: 0.6rem 1rem !important;
+    min-height: 44px !important; /* Minimum touch target size */
+  }
+  
+  input, select, textarea {
+    font-size: 16px !important; /* Prevent iOS zoom on focus */
+    min-height: 44px !important;
+  }
+}

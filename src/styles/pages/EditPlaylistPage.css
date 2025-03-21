@@ -88,3 +88,58 @@
 .add-video-url-form textarea {
   min-height: 60px;
 }
+
+/* Responsive styles for EditPlaylistPage */
+@media (max-width: 768px) {
+  .edit-playlist-content {
+    padding: 1.5rem;
+  }
+  
+  .edit-playlist-header,
+  .edit-playlist-videos {
+    padding: 1.5rem;
+  }
+  
+  .edit-playlist-videos h2 {
+    margin-bottom: 1.2rem;
+  }
+  
+  .add-video-tab {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .edit-playlist-content {
+    padding: 1rem;
+  }
+  
+  .edit-playlist-header,
+  .edit-playlist-videos {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .back-link {
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .add-video-tabs {
+    flex-wrap: wrap;
+  }
+  
+  .add-video-tab {
+    flex: 1;
+    justify-content: center;
+    padding: 0.5rem;
+    min-width: 50%;
+  }
+  
+  /* Ensure checkbox is touch-friendly */
+  .playlist-header-form .checkbox-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+  }
+}

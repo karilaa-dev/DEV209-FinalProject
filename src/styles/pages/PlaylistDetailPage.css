@@ -125,3 +125,72 @@
 .add-videos-link:hover {
   text-decoration: underline;
 }
+
+/* Back link styling */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  transition: color 0.3s;
+}
+
+.back-link:hover {
+  color: #0066cc;
+}
+
+/* Responsive styles for PlaylistDetailPage */
+@media (max-width: 768px) {
+  .playlist-detail-content {
+    padding: 1.5rem;
+  }
+  
+  .playlist-detail-header {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .playlist-videos {
+    padding: 1.5rem;
+  }
+  
+  .playlist-title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .playlist-detail-content {
+    padding: 1rem;
+  }
+  
+  .playlist-detail-header {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .playlist-videos {
+    padding: 1rem;
+  }
+  
+  .playlist-title-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+  
+  .playlist-title {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .edit-button {
+    align-self: flex-start;
+  }
+  
+  .not-found, .no-videos {
+    padding: 1.5rem 1rem;
+  }
+}

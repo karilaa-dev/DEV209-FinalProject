@@ -71,3 +71,47 @@
   height: 16px;
   pointer-events: none; /* Ensures the icon doesn't interfere with drag events */
 }
+
+/* Responsive styles for SortableVideoItem */
+@media (max-width: 768px) {
+  .sortable-video-item .drag-handle {
+    padding: 0 10px;
+  }
+  
+  .sortable-video-item .drag-handle svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@media (max-width: 576px) {
+  .sortable-video-item {
+    flex-direction: column;
+  }
+  
+  .sortable-video-item .drag-handle {
+    width: 100%;
+    padding: 8px 0;
+    border-radius: 8px 8px 0 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  
+  .sortable-video-item .editable-video-item {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+  
+  /* Make the drag handle more touch-friendly */
+  .sortable-video-item .drag-handle svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Adjust the drag handle to be more visible on mobile */
+  .sortable-video-item .drag-handle::before {
+    content: "Drag to reorder";
+    font-size: 0.8rem;
+    margin-right: 8px;
+  }
+}

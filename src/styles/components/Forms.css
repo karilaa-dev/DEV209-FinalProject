@@ -130,3 +130,63 @@ select:disabled {
   background-color: #99c2ff;
   cursor: not-allowed;
 }
+
+/* Responsive form styles */
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="url"],
+  input[type="search"],
+  textarea,
+  select {
+    padding: 0.8rem 0.9rem;
+    font-size: 16px; /* Prevent iOS zoom */
+  }
+  
+  .form-group {
+    margin-bottom: 1.2rem;
+  }
+  
+  .form-actions {
+    margin-top: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="url"],
+  input[type="search"],
+  textarea,
+  select {
+    padding: 0.7rem 0.8rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .cancel-button, .submit-button, .save-button {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    min-height: 44px; /* Touch-friendly size */
+  }
+  
+  /* Reverse order to put primary action at the bottom for easier thumb access */
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+  
+  /* Checkbox larger touch target */
+  input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+  }
+}

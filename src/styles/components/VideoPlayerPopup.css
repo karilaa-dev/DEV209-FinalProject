@@ -1,7 +1,7 @@
 /* Video Player Popup Styles */
 .video-popup-modal {
   max-width: 900px;
-  width: 90%;
+  width: 95%;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -11,6 +11,8 @@
   display: flex;
   align-items: center;
   gap: 0.8rem;
+  flex-wrap: wrap;
+  padding: 0.5rem;
 }
 
 .popup-control-button {
@@ -23,6 +25,9 @@
   align-items: center;
   justify-content: center;
   transition: color 0.2s, transform 0.2s;
+  min-height: 44px; /* Touch-friendly size */
+  min-width: 44px; /* Touch-friendly size */
+  padding: 0.5rem;
 }
 
 .popup-control-button:hover {
@@ -62,4 +67,43 @@
   max-height: 150px;
   overflow-y: auto;
   border-top: 1px solid #eee;
+}
+
+/* Responsive styles for VideoPlayerPopup */
+@media (max-width: 768px) {
+  .video-popup-modal {
+    width: 98%;
+    max-height: 95vh;
+  }
+  
+  .popup-controls {
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .video-popup-details {
+    max-height: 120px;
+    padding: 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .video-popup-modal {
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0 !important; /* Override any border-radius from Modal component */
+  }
+  
+  .popup-controls {
+    padding: 0.5rem 0.3rem;
+  }
+  
+  .popup-control-button {
+    font-size: 1rem;
+  }
+  
+  .video-popup-details {
+    max-height: 100px;
+    padding: 0.7rem;
+  }
 }

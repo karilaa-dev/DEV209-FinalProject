@@ -53,8 +53,49 @@
   color: #666;
   cursor: pointer;
   transition: color 0.2s;
+  min-height: 44px; /* Touch-friendly size */
+  min-width: 44px; /* Touch-friendly size */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .close-button:hover {
   color: #e74c3c;
+}
+
+/* Responsive styles for Modal */
+@media (max-width: 768px) {
+  .popup-modal {
+    width: 95%;
+  }
+  
+  .modal-header {
+    padding: 0.8rem;
+  }
+  
+  .modal-content {
+    padding: 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .popup-modal {
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0; /* Full screen on mobile */
+    margin: 0;
+  }
+  
+  .modal-header {
+    padding: 0.7rem;
+  }
+  
+  .modal-content {
+    padding: 0.7rem;
+  }
+  
+  .close-button {
+    font-size: 1.3rem; /* Larger touch target */
+  }
 }
