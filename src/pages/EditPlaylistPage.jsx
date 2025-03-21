@@ -323,23 +323,16 @@ const EditPlaylistPage = () => {
       const activeIndex = parseInt(active.id.split('-')[1]);
       const overIndex = parseInt(over.id.split('-')[1]);
       
-      // Update local state first for immediate UI feedback
+      // Create the updated videos array
       const updatedVideos = arrayMove(
         [...playlist.videos],
         activeIndex,
         overIndex
       );
       
-      const updatedPlaylist = {
-        ...playlist,
-        videos: updatedVideos
-      };
-      
-      // Update the UI immediately
-      setPlaylist(updatedPlaylist);
-      
       try {
-        // Save the changes to the database
+        // Save the changes to the database without updating the UI again
+        // since dnd-kit has already visually moved the item
         const { error } = await updatePlaylist(playlistId, {
           videos: updatedVideos,
           updatedAt: new Date().toISOString(),
@@ -348,6 +341,13 @@ const EditPlaylistPage = () => {
         if (error) {
           throw new Error(error);
         }
+        
+        // Only update the state if we need to sync with the database
+        // but don't trigger a visual update
+        setPlaylist(prevPlaylist => ({
+          ...prevPlaylist,
+          videos: updatedVideos
+        }));
       } catch (err) {
         setError(`Failed to reorder video: ${err.message}`);
         // Fetch the playlist again to restore the correct order
@@ -570,6 +570,11 @@ const EditPlaylistPage = () => {
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragEnd={handleDragEnd}
+              measuring={{
+                droppable: {
+                  strategy: 'always',
+                },
+              }}
             >
               <SortableContext
                 items={playlist.videos.map((_, index) => `video-${index}`)}

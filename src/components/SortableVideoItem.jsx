@@ -37,7 +37,12 @@ const SortableVideoItem = ({
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="sortable-video-item">
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className="sortable-video-item"
+      data-dragging={isDragging}
+    >
       <div className="drag-handle" {...attributes} {...listeners}>
         <FaGripVertical />
       </div>

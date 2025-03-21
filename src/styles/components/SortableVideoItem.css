@@ -4,6 +4,8 @@
   position: relative;
   margin-bottom: 1rem;
   cursor: grab;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform, opacity;
 }
 
 .sortable-video-item:active {
@@ -38,4 +40,11 @@
   z-index: 999;
   opacity: 0.8;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
+  pointer-events: none;
+}
+
+/* Improve animation for all items during drag */
+.sortable-video-item {
+  transform-origin: center center;
 }
