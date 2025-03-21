@@ -4,9 +4,12 @@ import { useAuth } from "../context/AuthContext";
 import { getPlaylist, updatePlaylist, removeVideoFromPlaylist, updateVideoInPlaylist, addVideoToPlaylist } from "../services/playlist";
 import Navbar from "../components/Navbar";
 import EditableVideoItem from "../components/EditableVideoItem";
+import SortableVideoItem from "../components/SortableVideoItem";
 import YouTubeSearch from "../components/YouTubeSearch";
 import { extractVideoId } from "../services/youtube";
 import { FaArrowLeft, FaPlus, FaLink, FaSearch, FaTimes } from "react-icons/fa";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 
 const EditPlaylistPage = () => {
   const { playlistId } = useParams();
@@ -28,6 +31,14 @@ const EditPlaylistPage = () => {
     isHidden: false,
   });
   const [errors, setErrors] = useState({});
+
+  // Set up sensors for drag and drop
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Redirect if not authenticated
   if (!isAuthenticated) {
@@ -303,6 +314,49 @@ const EditPlaylistPage = () => {
     }
   };
 
+  // Handle drag and drop reordering
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+    
+    if (active.id !== over.id) {
+      // Extract the indexes from the id strings (format: "video-{index}")
+      const activeIndex = parseInt(active.id.split('-')[1]);
+      const overIndex = parseInt(over.id.split('-')[1]);
+      
+      // Update local state first for immediate UI feedback
+      const updatedVideos = arrayMove(
+        [...playlist.videos],
+        activeIndex,
+        overIndex
+      );
+      
+      const updatedPlaylist = {
+        ...playlist,
+        videos: updatedVideos
+      };
+      
+      // Update the UI immediately
+      setPlaylist(updatedPlaylist);
+      
+      try {
+        // Save the changes to the database
+        const { error } = await updatePlaylist(playlistId, {
+          videos: updatedVideos,
+          updatedAt: new Date().toISOString(),
+        });
+        
+        if (error) {
+          throw new Error(error);
+        }
+      } catch (err) {
+        setError(`Failed to reorder video: ${err.message}`);
+        // Fetch the playlist again to restore the correct order
+        const { playlist: refreshedPlaylist } = await getPlaylist(playlistId);
+        setPlaylist(refreshedPlaylist);
+      }
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name.trim()) {
@@ -512,24 +566,36 @@ const EditPlaylistPage = () => {
           </div>
           
           {playlist.videos && playlist.videos.length > 0 ? (
-            <div className="editable-video-list">
-              {playlist.videos.map((video, index) => (
-                <EditableVideoItem
-                  key={index}
-                  video={video}
-                  index={index}
-                  playlistId={playlistId}
-                  onRemove={handleRemoveVideo}
-                  onEdit={handleEditVideo}
-                  onMoveUp={handleMoveUp}
-                  onMoveDown={handleMoveDown}
-                  isFirst={index === 0}
-                  isLast={index === playlist.videos.length - 1}
-                  autoOpenEditModal={index === lastAddedVideoIndex}
-                  onModalClosed={() => setLastAddedVideoIndex(null)}
-                />
-              ))}
-            </div>
+            <DndContext 
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={playlist.videos.map((_, index) => `video-${index}`)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="editable-video-list">
+                  {playlist.videos.map((video, index) => (
+                    <SortableVideoItem
+                      key={`video-${index}`}
+                      id={`video-${index}`}
+                      video={video}
+                      index={index}
+                      playlistId={playlistId}
+                      onRemove={handleRemoveVideo}
+                      onEdit={handleEditVideo}
+                      onMoveUp={handleMoveUp}
+                      onMoveDown={handleMoveDown}
+                      isFirst={index === 0}
+                      isLast={index === playlist.videos.length - 1}
+                      autoOpenEditModal={index === lastAddedVideoIndex}
+                      onModalClosed={() => setLastAddedVideoIndex(null)}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
           ) : (
             <div className="no-videos">
               <p>This playlist has no videos.</p>
