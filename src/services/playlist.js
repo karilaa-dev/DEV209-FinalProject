@@ -15,8 +15,14 @@ import {
   increment
 } from "firebase/firestore";
 import { db } from "./firebase";
+import { handleServiceError } from "./utils";
 
-// Create a new playlist
+/**
+ * Create a new playlist
+ * @param {object} playlistData - The data for the new playlist
+ * @param {string} userId - The ID of the user creating the playlist
+ * @returns {Promise<object>} - Promise that resolves with the new playlist data
+ */
 export const createPlaylist = async (playlistData, userId) => {
   try {
     const playlistWithUser = {
@@ -32,12 +38,15 @@ export const createPlaylist = async (playlistData, userId) => {
     const docRef = await addDoc(collection(db, "playlists"), playlistWithUser);
     return { id: docRef.id, ...playlistWithUser };
   } catch (error) {
-    console.error("Error creating playlist: ", error);
-    return { error };
+    return handleServiceError(error, "Error creating playlist");
   }
 };
 
-// Get a playlist by ID
+/**
+ * Get a playlist by ID
+ * @param {string} playlistId - The ID of the playlist to retrieve
+ * @returns {Promise<object>} - Promise that resolves with the playlist data
+ */
 export const getPlaylist = async (playlistId) => {
   try {
     const playlistDoc = await getDoc(doc(db, "playlists", playlistId));
@@ -48,11 +57,16 @@ export const getPlaylist = async (playlistId) => {
       return { error: "Playlist not found" };
     }
   } catch (error) {
-    return { error };
+    return handleServiceError(error, "Error getting playlist");
   }
 };
 
-// Update a playlist
+/**
+ * Update a playlist
+ * @param {string} playlistId - The ID of the playlist to update
+ * @param {object} playlistData - The data to update the playlist with
+ * @returns {Promise<object>} - Promise that resolves with a success flag
+ */
 export const updatePlaylist = async (playlistId, playlistData) => {
   try {
     const playlistRef = doc(db, "playlists", playlistId);
@@ -64,21 +78,29 @@ export const updatePlaylist = async (playlistId, playlistData) => {
     
     return { success: true };
   } catch (error) {
-    return { error };
+    return handleServiceError(error, "Error updating playlist");
   }
 };
 
-// Delete a playlist
+/**
+ * Delete a playlist
+ * @param {string} playlistId - The ID of the playlist to delete
+ * @returns {Promise<object>} - Promise that resolves with a success flag
+ */
 export const deletePlaylist = async (playlistId) => {
   try {
     await deleteDoc(doc(db, "playlists", playlistId));
     return { success: true };
   } catch (error) {
-    return { error };
+    return handleServiceError(error, "Error deleting playlist");
   }
 };
 
-// Get user playlists
+/**
+ * Get user playlists
+ * @param {string} userId - The ID of the user whose playlists to retrieve
+ * @returns {Promise<object>} - Promise that resolves with an object containing the user's playlists
+ */
 export const getUserPlaylists = async (userId) => {
   try {
     // Fixed to handle the index building error
@@ -104,115 +126,76 @@ export const getUserPlaylists = async (userId) => {
     
     return { playlists };
   } catch (error) {
-    return { error };
+    return handleServiceError(error, "Error getting user playlists");
   }
 };
 
-// Get all playlists with pagination
+/**
+ * Get all playlists with pagination
+ * @param {object|null} lastVisible - The last visible document from the previous page
+ * @param {number} itemsPerPage - The number of items to return per page
+ * @returns {Promise<object>} - Promise that resolves with an object containing the playlists and the last visible document
+ */
 export const getAllPlaylists = async (lastVisible = null, itemsPerPage = 8) => {
   try {
     console.log(`getAllPlaylists called with lastVisible: ${lastVisible ? 'exists' : 'null'}, itemsPerPage: ${itemsPerPage}`);
-    
+
     let q;
-    
+
+    // Modified query to avoid Firestore index error
+    // We'll fetch playlists ordered by createdAt and filter out hidden ones in memory
     if (lastVisible) {
       q = query(
         collection(db, "playlists"),
-        // Add filter to exclude hidden playlists
-        where("isHidden", "!=", true),
         orderBy("createdAt", "desc"),
         startAfter(lastVisible),
-        limit(itemsPerPage)
+        // Fetch more items than requested to account for filtering
+        limit(itemsPerPage * 2)
       );
     } else {
       q = query(
         collection(db, "playlists"),
-        // Add filter to exclude hidden playlists
-        where("isHidden", "!=", true),
         orderBy("createdAt", "desc"),
-        limit(itemsPerPage)
+        // Fetch more items than requested to account for filtering
+        limit(itemsPerPage * 2)
       );
     }
-    
+
     const querySnapshot = await getDocs(q);
-    const playlists = [];
-    
+    const allPlaylists = [];
+
     querySnapshot.forEach((doc) => {
-      playlists.push({ id: doc.id, ...doc.data() });
+      allPlaylists.push({ id: doc.id, ...doc.data() });
     });
+
+    // Filter out hidden playlists in memory
+    const playlists = allPlaylists
+      .filter(playlist => playlist.isHidden !== true)
+      .slice(0, itemsPerPage);
+
+    // Find the last visible document that wasn't filtered out
+    const lastVisibleIndex = allPlaylists.findIndex(playlist => 
+      playlist.id === playlists[playlists.length - 1]?.id
+    );
     
-    const lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
-    
-    console.log(`Fetched ${playlists.length} playlists, lastDoc: ${lastDoc ? 'exists' : 'null'}`);
-    
-    return { 
+    const lastDoc = lastVisibleIndex >= 0 ? querySnapshot.docs[lastVisibleIndex] : null;
+
+    console.log(`Fetched ${allPlaylists.length} total playlists, filtered to ${playlists.length}, lastDoc: ${lastDoc ? 'exists' : 'null'}`);
+
+    return {
       playlists,
       lastVisible: lastDoc
     };
   } catch (error) {
-    console.error("Error in getAllPlaylists:", error);
-    
-    // Add fallback logic for index errors
-    if (error.code === 'failed-precondition') {
-      console.log("Index building error detected, using fallback query");
-      
-      try {
-        // Handle the index building error by fetching without ordering
-        const simpleQuery = query(
-          collection(db, "playlists"),
-          where("isHidden", "!=", true),
-          limit(itemsPerPage * 2) // Fetch more to ensure we have enough for pagination
-        );
-        
-        const querySnapshot = await getDocs(simpleQuery);
-        let allPlaylists = [];
-        
-        querySnapshot.forEach((doc) => {
-          allPlaylists.push({ id: doc.id, ...doc.data() });
-        });
-        
-        // Sort in memory
-        allPlaylists.sort((a, b) => {
-          return new Date(b.createdAt) - new Date(a.createdAt);
-        });
-        
-        console.log(`Fallback query fetched ${allPlaylists.length} playlists`);
-        
-        // If lastVisible is provided, we need to find where to start
-        if (lastVisible && lastVisible.id) {
-          const lastVisibleIndex = allPlaylists.findIndex(p => p.id === lastVisible.id);
-          if (lastVisibleIndex !== -1) {
-            allPlaylists = allPlaylists.slice(lastVisibleIndex + 1);
-            console.log(`Sliced from index ${lastVisibleIndex + 1}, ${allPlaylists.length} playlists remaining`);
-          }
-        }
-        
-        // Get the current page and the next lastVisible
-        const currentPage = allPlaylists.slice(0, itemsPerPage);
-        const nextLastVisible = allPlaylists.length > itemsPerPage ? 
-          { id: currentPage[currentPage.length - 1].id } : null;
-        
-        console.log(`Returning ${currentPage.length} playlists, nextLastVisible: ${nextLastVisible ? 'exists' : 'null'}`);
-        
-        return { 
-          playlists: currentPage,
-          lastVisible: nextLastVisible,
-          indexBuilding: true
-        };
-      } catch (fallbackError) {
-        console.error("Error in fallback query:", fallbackError);
-        return { 
-          error: "Failed to load playlists. Please try again later.",
-          originalError: error
-        };
-      }
-    }
-    
-    return { error: "Failed to load playlists", originalError: error };
+    return handleServiceError(error, "Failed to load playlists");
   }
 };
 
-// Search playlists
+/**
+ * Search playlists
+ * @param {string} searchTerm - The search term to use
+ * @returns {Promise<object>} - Promise that resolves with an object containing the matching playlists
+ */
 export const searchPlaylists = async (searchTerm) => {
   try {
     // Firestore doesn't support full-text search natively
@@ -241,11 +224,16 @@ export const searchPlaylists = async (searchTerm) => {
     
     return { playlists };
   } catch (error) {
-    return { error };
+    return handleServiceError(error, "Error searching playlists");
   }
 };
 
-// Add a video to a playlist
+/**
+ * Add a video to a playlist
+ * @param {string} playlistId - The ID of the playlist to add the video to
+ * @param {object} videoData - The data for the video to add
+ * @returns {Promise<object>} - Promise that resolves with a success flag
+ */
 export const addVideoToPlaylist = async (playlistId, videoData) => {
   try {
     const playlistRef = doc(db, "playlists", playlistId);
@@ -268,11 +256,16 @@ export const addVideoToPlaylist = async (playlistId, videoData) => {
     
     return { success: true };
   } catch (error) {
-    return { error };
+    return handleServiceError(error, "Error adding video to playlist");
   }
 };
 
-// Remove a video from a playlist
+/**
+ * Remove a video from a playlist
+ * @param {string} playlistId - The ID of the playlist to remove the video from
+ * @param {number} videoIndex - The index of the video to remove
+ * @returns {Promise<object>} - Promise that resolves with a success flag
+ */
 export const removeVideoFromPlaylist = async (playlistId, videoIndex) => {
   try {
     const playlistRef = doc(db, "playlists", playlistId);
@@ -295,11 +288,17 @@ export const removeVideoFromPlaylist = async (playlistId, videoIndex) => {
     
     return { success: true };
   } catch (error) {
-    return { error };
+    return handleServiceError(error, "Error removing video from playlist");
   }
 };
 
-// Update a video's info in a playlist
+/**
+ * Update a video's info in a playlist
+ * @param {string} playlistId - The ID of the playlist containing the video
+ * @param {number} videoIndex - The index of the video to update
+ * @param {object} updatedVideoData - The data to update the video with
+ * @returns {Promise<object>} - Promise that resolves with a success flag and the updated video data
+ */
 export const updateVideoInPlaylist = async (playlistId, videoIndex, updatedVideoData) => {
   try {
     const playlistRef = doc(db, "playlists", playlistId);
@@ -331,11 +330,15 @@ export const updateVideoInPlaylist = async (playlistId, videoIndex, updatedVideo
     
     return { success: true, video: updatedVideos[videoIndex] };
   } catch (error) {
-    return { error };
+    return handleServiceError(error, "Error updating video in playlist");
   }
 };
 
-// Update view count for a playlist
+/**
+ * Update view count for a playlist
+ * @param {string} playlistId - The ID of the playlist to update the view count for
+ * @returns {Promise<object>} - Promise that resolves with a success flag
+ */
 export const updateViewCount = async (playlistId) => {
   try {
     const playlistDocRef = doc(db, "playlists", playlistId);
@@ -353,7 +356,6 @@ export const updateViewCount = async (playlistId) => {
     
     return { success: true };
   } catch (error) {
-    console.error("Error updating view count: ", error);
-    return { error };
+    return handleServiceError(error, "Error updating view count");
   }
 };

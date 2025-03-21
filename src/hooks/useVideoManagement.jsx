@@ -1,12 +1,21 @@
 import { useState } from "react";
 import { extractVideoId } from "../services/youtube";
 
+/**
+ * Custom hook for managing a list of videos
+ * @param {array} initialVideos - Initial array of videos (optional)
+ * @returns {object} - Object containing video state and management functions
+ */
 const useVideoManagement = (initialVideos = []) => {
   const [videos, setVideos] = useState(initialVideos);
   const [videoUrl, setVideoUrl] = useState("");
   const [videoTitle, setVideoTitle] = useState("");
   const [videoDescription, setVideoDescription] = useState("");
 
+  /**
+   * Adds a new video to the list
+   * @returns {boolean} - True if the video was added successfully, false otherwise
+   */
   const addVideo = () => {
     if (!videoUrl.trim()) {
       return false;
@@ -39,6 +48,10 @@ const useVideoManagement = (initialVideos = []) => {
     return true;
   };
 
+  /**
+   * Selects a video and adds it to the list
+   * @param {object} video - The video object to select
+   */
   const selectVideo = (video) => {
     const newVideo = {
       url: video.url,
@@ -51,12 +64,20 @@ const useVideoManagement = (initialVideos = []) => {
     setVideos([...videos, newVideo]);
   };
 
+  /**
+   * Removes a video from the list
+   * @param {number} index - The index of the video to remove
+   */
   const removeVideo = (index) => {
     const updatedVideos = [...videos];
     updatedVideos.splice(index, 1);
     setVideos(updatedVideos);
   };
 
+  /**
+   * Moves a video up in the list
+   * @param {number} index - The index of the video to move
+   */
   const moveVideoUp = (index) => {
     if (index === 0) return; // Already at the top
 
@@ -68,6 +89,10 @@ const useVideoManagement = (initialVideos = []) => {
     setVideos(updatedVideos);
   };
 
+  /**
+   * Moves a video down in the list
+   * @param {number} index - The index of the video to move
+   */
   const moveVideoDown = (index) => {
     if (index === videos.length - 1) return; // Already at the bottom
 

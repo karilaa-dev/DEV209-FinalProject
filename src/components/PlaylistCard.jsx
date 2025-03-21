@@ -5,6 +5,7 @@ import { getCurrentUserData } from "../services/auth";
 import { doc, updateDoc, setDoc, getDoc, increment } from "firebase/firestore";
 import { db } from "../services/firebase"; // Correct import path
 import { useAuth } from "../context/AuthContext"; // Import useAuth to get current user
+import PropTypes from 'prop-types';
 
 const PlaylistCard = ({ playlist, showHiddenIndicator = false }) => {
     const { currentUser } = useAuth(); // Get current user
@@ -110,6 +111,20 @@ const PlaylistCard = ({ playlist, showHiddenIndicator = false }) => {
             </Link>
         </div>
     );
+};
+
+PlaylistCard.propTypes = {
+  playlist: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string,
+    userId: PropTypes.string,
+    isHidden: PropTypes.bool,
+    videos: PropTypes.arrayOf(PropTypes.object),
+    viewCount: PropTypes.number,
+    creatorName: PropTypes.string
+  }).isRequired,
+  showHiddenIndicator: PropTypes.bool
 };
 
 export default PlaylistCard;

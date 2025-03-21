@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { logoutUser } from "../services/auth";
 import { FaUser, FaCog } from "react-icons/fa";
+import PropTypes from 'prop-types';
 
 const Navbar = () => {
     const { isAuthenticated, userData } = useAuth();
@@ -39,7 +40,7 @@ const Navbar = () => {
                 </Link>
 
                 <div className="navbar-search">
-                    {/* Search component will be rendered on the HomePage */}
+                    {/* Search component is rendered on the HomePage */}
                 </div>
 
                 <div className="navbar-buttons">
@@ -90,6 +91,13 @@ const Navbar = () => {
             </div>
         </nav>
     );
+};
+
+Navbar.propTypes = {
+  isAuthenticated: PropTypes.bool,
+  userData: PropTypes.shape({
+    username: PropTypes.string
+  })
 };
 
 export default Navbar;

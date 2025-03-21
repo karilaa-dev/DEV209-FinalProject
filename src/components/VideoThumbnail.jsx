@@ -1,6 +1,7 @@
 import React from "react";
 import { extractVideoId } from "../services/youtube";
 import { FaPlay } from "react-icons/fa";
+import PropTypes from 'prop-types';
 
 const VideoThumbnail = ({ video, showPlayButton = false }) => {
   const videoId = extractVideoId(video.url);
@@ -25,6 +26,14 @@ const VideoThumbnail = ({ video, showPlayButton = false }) => {
       )}
     </div>
   );
+};
+
+VideoThumbnail.propTypes = {
+  video: PropTypes.shape({
+    url: PropTypes.string.isRequired,
+    title: PropTypes.string,
+  }).isRequired,
+  showPlayButton: PropTypes.bool,
 };
 
 export default VideoThumbnail;

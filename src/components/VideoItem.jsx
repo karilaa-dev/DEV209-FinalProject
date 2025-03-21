@@ -1,6 +1,7 @@
 import React from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import VideoThumbnail from "./VideoThumbnail";
+import PropTypes from 'prop-types';
 
 const VideoItem = ({ video, index, playlistId, onClick }) => {
   const handleClick = () => {
@@ -32,6 +33,18 @@ const VideoItem = ({ video, index, playlistId, onClick }) => {
       </div>
     </div>
   );
+};
+
+VideoItem.propTypes = {
+  video: PropTypes.shape({
+    title: PropTypes.string,
+    description: PropTypes.string,
+    url: PropTypes.string.isRequired,
+    thumbnailUrl: PropTypes.string,
+  }).isRequired,
+  index: PropTypes.number.isRequired,
+  playlistId: PropTypes.string,
+  onClick: PropTypes.func,
 };
 
 export default VideoItem;

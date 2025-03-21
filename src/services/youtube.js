@@ -43,8 +43,7 @@ export const searchYouTubeVideos = async (query, maxResults = 5) => {
 
     return { videos, error: null };
   } catch (error) {
-    console.error('YouTube search error:', error);
-    return { videos: [], error: error.message };
+    return handleServiceError(error, 'YouTube search error');
   }
 };
 
@@ -81,8 +80,7 @@ export const getVideoDetails = async (videoId) => {
       publishedAt: videoData.snippet.publishedAt
     };
   } catch (error) {
-    console.error('Error fetching video details:', error);
-    throw error;
+    return handleServiceError(error, 'Error fetching video details');
   }
 };
 
