@@ -191,20 +191,22 @@ const PlaylistDetailPage = () => {
             setSelectedVideoIndex(nextIndex);
         }
     };
+
     return (
         <div className="playlist-detail-page">
             <Navbar />
 
-            <div className="back-link-container">
-                <Link to="/" className="back-link">
-                    <FaArrowLeft /> Back to Playlists
-                </Link>
-            </div>
-
             <div className="playlist-detail-content">
                 <div className="playlist-detail-header">
+                    <Link to="/" className="back-link">
+                        <FaArrowLeft /> Back to Playlists
+                    </Link>
+
                     <div className="playlist-header-content">
                         <div className="playlist-title-container">
+                            <div className="favorite-icon" onClick={handleFavoriteToggle}>
+                                <FaStar className={isFavorite ? "favorite-checked" : "favorite-unchecked"} />
+                            </div>
                             <h1 className="playlist-title">{playlist.name}</h1>
                             {isOwner && (
                                 <Link to={`/edit-playlist/${playlistId}`} className="edit-button">
@@ -218,17 +220,16 @@ const PlaylistDetailPage = () => {
                         <p className="playlist-creator">
                             Created by: {creatorName}
                         </p>
-                        <div className="playlist-stats">
-                            <p className="playlist-video-count">
-                                {playlist.videos ? playlist.videos.length : 0} videos
-                            </p>
-                            <p className="playlist-view-count">
-                                {playlist.viewCount || 0} views
-                            </p>
-                        </div>
+                        <p className="playlist-video-count">
+                            {playlist.videos ? playlist.videos.length : 0} videos
+                        </p>
+
                         <div className="playlist-actions">
                             {/* Edit button moved to title container */}
                         </div>
+                        <p className="playlist-view-count">
+                            {playlist.viewCount || 0} views
+                        </p>
                     </div>
                 </div>
 
@@ -271,7 +272,6 @@ const PlaylistDetailPage = () => {
             )}
         </div>
     );
-
 };
 
 export default PlaylistDetailPage;
