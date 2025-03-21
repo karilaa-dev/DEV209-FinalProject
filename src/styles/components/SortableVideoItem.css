@@ -4,8 +4,13 @@
   position: relative;
   margin-bottom: 1rem;
   cursor: grab;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 250ms cubic-bezier(0.25, 1, 0.5, 1), 
+              box-shadow 250ms cubic-bezier(0.25, 1, 0.5, 1),
+              opacity 250ms cubic-bezier(0.25, 1, 0.5, 1);
   will-change: transform, opacity;
+  transform-origin: center center;
+  touch-action: none; /* Prevents scrolling while dragging on touch devices */
+  user-select: none; /* Prevents text selection during drag */
 }
 
 .sortable-video-item:active {
@@ -15,19 +20,26 @@
 .sortable-video-item .drag-handle {
   display: flex;
   align-items: center;
-  padding: 0 10px;
+  justify-content: center;
+  padding: 0 12px;
   color: #888;
   cursor: grab;
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
   background-color: #f5f5f5;
   transition: color 0.2s, background-color 0.2s;
+  touch-action: none;
 }
 
-.sortable-video-item .drag-handle:hover,
-.sortable-video-item .drag-handle:active {
+.sortable-video-item .drag-handle:hover {
   color: #333;
   background-color: #e0e0e0;
+}
+
+.sortable-video-item .drag-handle:active {
+  color: #333;
+  background-color: #d0d0d0;
+  cursor: grabbing;
 }
 
 .sortable-video-item .editable-video-item {
@@ -36,15 +48,26 @@
 }
 
 /* Style for when the item is being dragged */
-.sortable-video-item[data-dragging="true"] {
-  z-index: 999;
-  opacity: 0.8;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+.sortable-video-item[data-dragging="true"],
+.sortable-video-item.is-dragging {
+  z-index: 999 !important;
+  opacity: 0.85;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
   transform: scale(1.02);
   pointer-events: none;
+  background-color: #fff;
+  border-radius: 8px;
 }
 
-/* Improve animation for all items during drag */
-.sortable-video-item {
-  transform-origin: center center;
+/* Add a subtle highlight effect to indicate drop target */
+.sortable-video-item:not([data-dragging="true"]):hover {
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Ensure the drag handle is always visible and clickable */
+.sortable-video-item .drag-handle svg {
+  width: 16px;
+  height: 16px;
+  pointer-events: none; /* Ensures the icon doesn't interfere with drag events */
 }

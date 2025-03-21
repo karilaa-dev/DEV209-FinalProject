@@ -318,21 +318,44 @@ const EditPlaylistPage = () => {
   const handleDragEnd = async (event) => {
     const { active, over } = event;
     
+    if (!active || !over) {
+      console.error("Missing active or over in drag end event");
+      return;
+    }
+    
     if (active.id !== over.id) {
-      // Extract the indexes from the id strings (format: "video-{index}")
-      const activeIndex = parseInt(active.id.split('-')[1]);
-      const overIndex = parseInt(over.id.split('-')[1]);
-      
-      // Create the updated videos array
-      const updatedVideos = arrayMove(
-        [...playlist.videos],
-        activeIndex,
-        overIndex
-      );
-      
       try {
-        // Save the changes to the database without updating the UI again
-        // since dnd-kit has already visually moved the item
+        // Extract the indexes from the id strings (format: "video-{index}")
+        const activeIdParts = active.id.toString().split('-');
+        const overIdParts = over.id.toString().split('-');
+        
+        if (activeIdParts.length < 2 || overIdParts.length < 2) {
+          console.error("Invalid ID format in drag end event");
+          return;
+        }
+        
+        const activeIndex = parseInt(activeIdParts[1]);
+        const overIndex = parseInt(overIdParts[1]);
+        
+        if (isNaN(activeIndex) || isNaN(overIndex)) {
+          console.error("Invalid index in drag end event");
+          return;
+        }
+        
+        // Create the updated videos array
+        const updatedVideos = arrayMove(
+          [...playlist.videos],
+          activeIndex,
+          overIndex
+        );
+        
+        // Update the state immediately for a responsive UI
+        setPlaylist(prevPlaylist => ({
+          ...prevPlaylist,
+          videos: updatedVideos
+        }));
+        
+        // Save the changes to the database
         const { error } = await updatePlaylist(playlistId, {
           videos: updatedVideos,
           updatedAt: new Date().toISOString(),
@@ -341,18 +364,17 @@ const EditPlaylistPage = () => {
         if (error) {
           throw new Error(error);
         }
-        
-        // Only update the state if we need to sync with the database
-        // but don't trigger a visual update
-        setPlaylist(prevPlaylist => ({
-          ...prevPlaylist,
-          videos: updatedVideos
-        }));
       } catch (err) {
+        console.error("Drag end error:", err);
         setError(`Failed to reorder video: ${err.message}`);
+        
         // Fetch the playlist again to restore the correct order
-        const { playlist: refreshedPlaylist } = await getPlaylist(playlistId);
-        setPlaylist(refreshedPlaylist);
+        try {
+          const { playlist: refreshedPlaylist } = await getPlaylist(playlistId);
+          setPlaylist(refreshedPlaylist);
+        } catch (refreshError) {
+          console.error("Failed to refresh playlist:", refreshError);
+        }
       }
     }
   };
@@ -572,9 +594,10 @@ const EditPlaylistPage = () => {
               onDragEnd={handleDragEnd}
               measuring={{
                 droppable: {
-                  strategy: 'always',
+                  strategy: 'rects',
                 },
               }}
+              modifiers={[]}
             >
               <SortableContext
                 items={playlist.videos.map((_, index) => `video-${index}`)}

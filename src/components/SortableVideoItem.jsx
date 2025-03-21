@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "../styles/components/SortableVideoItem.css";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -26,22 +26,43 @@ const SortableVideoItem = ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id });
+    active,
+  } = useSortable({ 
+    id,
+    transition: {
+      duration: 250,
+      easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+    },
+  });
 
+  // Create a memoized style object with proper transform handling
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: transition || 'transform 250ms cubic-bezier(0.25, 1, 0.5, 1)',
     opacity: isDragging ? 0.5 : 1,
     position: "relative",
-    zIndex: isDragging ? 1 : 0,
+    zIndex: isDragging ? 999 : 0,
   };
+
+  // Add a class when dragging to help with styling
+  useEffect(() => {
+    const element = document.getElementById(id);
+    if (element) {
+      if (isDragging) {
+        element.classList.add('is-dragging');
+      } else {
+        element.classList.remove('is-dragging');
+      }
+    }
+  }, [isDragging, id]);
 
   return (
     <div 
+      id={id}
       ref={setNodeRef} 
       style={style} 
       className="sortable-video-item"
-      data-dragging={isDragging}
+      data-dragging={isDragging ? "true" : "false"}
     >
       <div className="drag-handle" {...attributes} {...listeners}>
         <FaGripVertical />
