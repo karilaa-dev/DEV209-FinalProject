@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import PlaylistCard from "../components/PlaylistCard";
 import SearchBar from "../components/SearchBar";
 import { FaPlus, FaTrash, FaEdit, FaLink } from "react-icons/fa";
+import "../styles/pages/HomePage.css";
 
 const DashboardPage = () => {
     const { isAuthenticated, currentUser } = useAuth();

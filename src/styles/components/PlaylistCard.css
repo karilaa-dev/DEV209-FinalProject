@@ -24,7 +24,7 @@
 }
 
 /* Playlist card styles */
-.playlist-card, .user-playlist-card-container {
+.playlist-card {
   background-color: white;
   border-radius: 8px;
   overflow: hidden;
@@ -34,7 +34,7 @@
   flex-direction: column;
 }
 
-.playlist-card:hover, .user-playlist-card-container:hover {
+.playlist-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
